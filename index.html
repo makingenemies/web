@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Making Enemies</title>
+<meta name="description" content="Making Enemies is a creative collective founded by Ayose Trujillo, focused on developing videogames and emotional experiences across multiple disciplines.">
+<meta property="og:title" content="Making Enemies">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://makingenemies.es/">
+<meta property="og:image" content="https://makingenemies.es/img/logo-flag.png">
+<meta property="og:description" content="Creative collective developing videogames and emotional experiences.">
+<link rel="icon" href="img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Roboto+Condensed:wght@400;700&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a class="wordmark" href="index.html">
+      <img src="img/wordmark.png" alt="Making Enemies">
+    </a>
+    <button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="menuOverlay" aria-label="Open menu">
+      <span class="bar"></span>
+      <span class="bar"></span>
+      <span class="bar"></span>
+    </button>
+  </div>
+</header>
+
+<div class="menu-overlay" id="menuOverlay">
+  <nav aria-label="Main">
+    <ul>
+      <li><a href="index.html" aria-current="page">Home</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+  </nav>
+  <p class="menu-meta">
+    <a href="mailto:makingenemiesgames@gmail.com">makingenemiesgames@gmail.com</a>
+  </p>
+</div>
+
+<main>
+
+  <section class="hero">
+    <img src="img/logo-flag.png" alt="Making Enemies">
+    <button class="hero-scroll" id="heroScroll" aria-label="Scroll down">
+      <svg width="38" height="24" viewBox="0 0 38 24" fill="none" stroke="currentColor" stroke-width="3">
+        <polyline points="4,5 19,19 34,5"/>
+      </svg>
+    </button>
+  </section>
+
+  <section class="band band--white" id="about">
+    <div class="wrap">
+      <h1 class="h-display reveal">This is Making Enemies</h1>
+
+      <div class="lede reveal d1">
+        <p>Making Enemies is a creative collective founded by Ayose Trujillo, focused on developing videogames and emotional experiences across multiple disciplines.</p>
+        <p>Born during game jams in 2020, where we created experimental titles within 48 hours, the project has evolved into a fully independent studio.</p>
+        <p>Today, that journey culminates with our first major title: <strong>Scholar Adventure: Mystery of Silence, now on Steam.</strong></p>
+      </div>
+
+      <div class="block reveal">
+        <div class="media">
+          <img src="img/scholar-adventure.jpg" alt="Scholar Adventure: Mystery of Silence" loading="lazy">
+        </div>
+        <h2 class="h-display">Scholar Adventure: Mystery of Silence</h2>
+        <p>Mystery of Silence is our first game, a point-and-click adventure where William, a young writer in search of inspiration, enters an abbey shrouded in silence.</p>
+      </div>
+
+      <div class="block block--centered reveal">
+        <div class="media">
+          <img src="img/game-jams.jpg" alt="Game Jams" loading="lazy">
+        </div>
+        <h2 class="h-display">Game Jams</h2>
+        <p>As a team we've taken part in several game jams, which have served us as both a learning ground and a laboratory for ideas. Here you'll find some of those projects.</p>
+      </div>
+
+      <div class="actions reveal">
+        <a class="btn" href="https://store.steampowered.com/app/3929410/Scholar_Adventure_Mystery_of_Silence/" target="_blank" rel="noopener"><span>Visit our Steam page</span></a>
+        <a class="btn" href="https://makingenemies.itch.io/" target="_blank" rel="noopener"><span>See our games on itch.io</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="band band--black band--tight presskit">
+    <div class="wrap">
+      <h2 class="h-display reveal">
+        <a href="https://drive.google.com/file/d/1WahPQx2aFWjE08ZvPuB_L9q5Dx_gvOlp/view?usp=sharing" target="_blank" rel="noopener">Download press kit Making Enemies</a>
+      </h2>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  © <span id="year">2026</span> Making Enemies
+</footer>
+
+<script src="site.js"></script>
+</body>
+</html>
