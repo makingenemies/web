@@ -113,7 +113,7 @@ body[data-crt="off"] #vignette{display:none !important}
 #screen::-webkit-scrollbar-thumb{background:var(--border)}
 
 /* ---------- OUTPUT ---------- */
-.ln{white-space:pre-wrap; word-break:break-word}
+.ln{white-space:pre-wrap; word-break:break-word; max-width:70ch}
 .ln.echo{color:var(--text); margin-top:1.1em}
 .ln.echo::before{content:"> "; color:var(--dim)}
 .ln.dim{color:var(--muted)}
@@ -174,6 +174,18 @@ body[data-crt="off"] #vignette{display:none !important}
 .person .n{color:var(--text)}
 .person .r{color:var(--muted)}
 .person .hd{color:var(--dim)}
+
+/* clipping entry: outlet in white, headline underneath */
+.clip{display:flex; flex-direction:column; gap:1px; margin:.15em 0 .75em}
+.clip a{color:var(--text); text-decoration:none; border-bottom:1px solid var(--border); align-self:flex-start}
+.clip a:hover,.clip a:focus-visible{background:var(--text); color:var(--bg); border-color:var(--text)}
+.clip .ct{color:var(--muted); font-size:.9em}
+
+/* store button that isn't live yet */
+.soonbtn{
+  border:1px dashed var(--hair); padding:7px 14px; color:var(--dim);
+  font-size:.82em; letter-spacing:.09em; text-transform:uppercase;
+}
 
 /* big action button inside output */
 .bigbtn{
@@ -314,7 +326,25 @@ body[data-crt="off"] #vignette{display:none !important}
 }
 #bootLogo small{display:block; font-size:.26em; letter-spacing:.42em; color:var(--muted); margin-top:1.4em; font-weight:400}
 #bootHint{margin-top:1.4em; color:var(--muted)}
-#boot #promptWrap{position:static; background:none; padding-top:.4em}
+/* relative, not static: the invisible input must stay bound to this line,
+   otherwise it stretches over the whole boot screen and eats every click */
+#boot #promptWrap{position:relative; background:none; padding-top:.4em}
+#bootHint .coarse{display:none}
+@media(pointer:coarse){
+  #bootHint .fine{display:none}
+  #bootHint .coarse{display:inline}
+}
+
+/* language selector */
+#langs{display:flex; gap:10px; margin-top:1.4em}
+#langs button{
+  border:1px solid var(--border); padding:11px 26px;
+  font-size:.9em; letter-spacing:.22em; color:var(--muted);
+}
+#langs button:hover,#langs button:focus-visible{background:var(--text); color:var(--bg); border-color:var(--text)}
+#langs button.locked{border-style:dashed; color:var(--dim)}
+#langNote{margin-top:.9em; color:var(--dim); font-size:.86em; letter-spacing:.06em}
+
 #skip{
   position:fixed; right:var(--pad); bottom:calc(var(--pad) + env(safe-area-inset-bottom));
   border:1px solid var(--border); padding:7px 15px;
@@ -446,7 +476,15 @@ body[data-crt="off"] #vignette{display:none !important}
 <div id="boot">
   <div id="bootLogo"><img id="bootMark" alt="Making Enemies"><small>Hostile Creative System</small></div>
   <div id="bootLines"></div>
-  <div id="bootHint" hidden>Type <span class="cmd" data-cmd="help">help</span> to begin — or any command you can guess.</div>
+  <div id="bootHint" hidden>
+    <span class="fine">Select a language to begin — or type a command.</span>
+    <span class="coarse">Select a language to begin.</span>
+  </div>
+  <div id="langs" hidden role="group" aria-label="Language">
+    <button id="langEs" data-lang="es">ES</button>
+    <button id="langEn" data-lang="en">EN</button>
+  </div>
+  <div id="langNote" hidden></div>
   <button id="skip">Skip boot</button>
 </div>
 
@@ -463,6 +501,38 @@ const ASSETS = {"flag": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAZAAAADUC
    Everything below is data-driven on purpose: projects, commands,
    games and secrets are declared once and the shell renders them.
    ============================================================ */
+
+const LANGS = {
+  en: { code:"en", label:"English",  available:true  },
+  es: { code:"es", label:"Espa\u00f1ol", available:false }   // pack not installed yet
+};
+
+/* ---------- CLIPPINGS ----------
+   The list lives OUTSIDE this file so it can grow without touching the site.
+   Point `clippingsUrl` at a JSON or CSV you control; the embedded list below
+   is only the fallback used when the fetch fails (offline, local file, 404). */
+const CLIPPINGS_SOURCE = "clippings.json";   // relative to the site root
+
+const CLIPPINGS = [
+  { outlet:"La Cueva Virtual", title:"An\u00e1lisis \u2013 Scholar Adventure: Mystery of Silence",
+    type:"press", game:"mystery-of-silence",
+    url:"https://lacuevavirtual.com/analisis-scholar-adventure-mystery-of-silence/" },
+  { outlet:"Adventure Game Hotspot", title:"Scholar Adventure: Mystery of Silence review",
+    type:"press", game:"mystery-of-silence",
+    url:"https://adventuregamehotspot.com/review/5737/scholar-adventure-mystery-of-silence" },
+  { outlet:"Play Save Repeat", title:"Review \u2013 Scholar Adventure: Mystery of Silence",
+    type:"press", game:"mystery-of-silence",
+    url:"https://www.playsaverepeat.com/reviews/review-scholar-adventure-mystery-of-silence" },
+  { outlet:"ComboGamer", title:"[An\u00e1lisis] Mystery of Silence \u2014 Un viaje a una abad\u00eda que susurra secretos",
+    type:"press", game:"mystery-of-silence",
+    url:"https://combogamer.com/12184/analisis-scholar-adventure-mystery-of-silence-un-viaje-a-una-abadia-que-susurra-secretos/" },
+  { outlet:"Naishys", title:"Un juego donde el SILENCIO es lo m\u00e1s aterrador\u2026 (completo)",
+    type:"video", game:"mystery-of-silence",
+    url:"https://www.youtube.com/watch?v=zKeSnVyI57I" },
+  { outlet:"Chocoholie", title:"100% Full Game Walkthrough + All Achievements",
+    type:"video", game:"mystery-of-silence",
+    url:"https://www.youtube.com/post/UgkxfgEztxzbN2w7lhdziV8sN09FtNdNd8ir" }
+];
 
 const CONFIG = {
   name: "Making Enemies",
@@ -500,11 +570,26 @@ const PROJECTS = [
     status: "released",
     year: 2025,
     summary: "Our first game, released in 2025. A point-and-click adventure where William, a young writer in search of inspiration, enters an abbey shrouded in silence. What he finds there is not inspiration. Ported to consoles in 2026.",
-    platforms: ["Steam", "Windows", "Mac", "Android", "iOS", "PS5", "Switch", "Xbox"],
+    platformGroups: [
+      { label:"Desktop",  items:[
+        { name:"Windows", url:"https://store.steampowered.com/app/3929410/Scholar_Adventure_Mystery_of_Silence/" },
+        { name:"Mac",     url:"https://store.steampowered.com/app/3929410/Scholar_Adventure_Mystery_of_Silence/" }
+      ]},
+      { label:"Consoles", items:[
+        { name:"PlayStation", url:"https://store.playstation.com/en-us/concept/10018141" },
+        { name:"Nintendo",    url:"https://www.nintendo.com/us/store/products/scholar-adventure-mystery-of-silence-switch/" },
+        { name:"Xbox",        url:"https://www.xbox.com/en-us/games/store/scholar_adventure_mystery_of_silence/9N276DRL8MJ0" }
+      ]},
+      { label:"Mobile",   items:[
+        { name:"iOS",     url:"https://apps.apple.com/us/app/mystery-of-silence/id6757854493" },
+        { name:"Android", url:null }   // PASTE GOOGLE PLAY URL HERE
+      ]}
+    ],
+    platforms: ["Windows", "Mac", "PlayStation", "Nintendo", "Xbox", "iOS", "Android"],
     tags: ["Point and click", "Adventure", "Mystery"],
     media: ASSETS.mos,
     links: [
-      { label:"Steam page", url:"https://store.steampowered.com/app/3929410/Scholar_Adventure_Mystery_of_Silence/" }
+      { label:"Steam", url:"https://store.steampowered.com/app/3929410/Scholar_Adventure_Mystery_of_Silence/" }
     ],
     hidden: "silence.log"
   },
@@ -552,7 +637,8 @@ const GAMES = [
 const state = {
   booted:false, sound:true,
   history:[], hi:-1,
-  secrets:{}, scores:{}, view:null, hovered:null, crt:false,
+  secrets:{}, scores:{}, view:null, hovered:null, crt:false, lang:"en",
+  clippings:CLIPPINGS, clipSource:"embedded", lastProject:null,
   pendingAnchor:false, anchorEl:null
 };
 const SECRET_TOTAL = 5; // the 7-0 Pong award is paused along with Pong
@@ -703,22 +789,29 @@ defc({ name:"help", desc:"List available commands.", visible:true, run(){
 }});
 
 defc({ name:"about", aliases:["team","crew","whois","aboutus"], desc:"Who we are.", visible:true, run(){
-  print("About us", "head");
+  print("Making Enemies", "head");
+  // one string per paragraph: .ln already wraps, so hand-wrapping breaks mobile
   printLines([
-    "MAKING ENEMIES is a creative collective founded by Ayose Trujillo,",
-    "developing videogames and emotional experiences across several",
-    "disciplines.",
+    "Making Enemies is a small creative studio founded by Ayose Trujillo.",
     "",
-    "It started in 2020, in game jams: experimental titles built in",
-    "forty-eight hours, with no time to be careful. That habit turned",
-    "into a studio.",
+    "It began in 2020 during game jams, building experimental games in forty-eight hours. There was never enough time to overthink anything. Only enough time to finish.",
     "",
-    "In 2026 it turned into our first full game \u2014 Scholar Adventure:",
-    "Mystery of Silence.",
+    "That way of working slowly became something bigger.",
     "",
-    "We make games, images, music and interactive objects.",
-    "Some files are public. Others are waiting to be found."
+    "In 2025, the studio released its first commercial game, Scholar Adventure: Mystery of Silence, published by DevilishGames. The game was warmly received by both players and the press, earning an aggregate score of 82/100, according to DeVuego\u2019s compilation of reviews across digital platforms.",
+    "",
+    "The studio is currently working on its next project, the second installment of the Scholar Adventure series.",
+    "",
+    "Today, Making Enemies creates videogames, illustrations, music and interactive projects.",
+    "",
+    "Everything here belongs to the same archive.",
+    "",
+    "Some files are easy to find.",
+    "",
+    "Others are still hidden."
   ], "dim");
+  print("");
+  print("Press and coverage: " + cmdLink("clippings"), "faint");
 
   const card = (m) => `
     <span class="person">
@@ -845,11 +938,46 @@ defc({ name:"contact", desc:"How to reach us.", visible:true, run(){
   print("See " + cmdLink("about") + " for who answers that address.", "faint");
 }});
 
+defc({ name:"clippings", aliases:["clipping","press-coverage","reviews"], usage:"clippings", desc:"Press and coverage.", visible:true, run(args){
+  // inside a project, `clipping` narrows to that game automatically
+  let filter = (args[0] || "").toLowerCase();
+  if(!filter && state.lastProject) filter = state.lastProject;
+
+  let list = state.clippings;
+  if(filter && filter !== "all"){
+    const narrowed = list.filter(c => c.game === filter);
+    if(narrowed.length) list = narrowed; else filter = "";
+  }
+
+  const proj = PROJECTS.find(p => p.slug === filter);
+  print(proj ? "Clippings \u00b7 " + proj.title : "Clippings", "head");
+
+  if(!list.length){ print("Nothing recorded yet.", "dim"); return; }
+
+  const groups = [
+    { key:"press", label:"Press \u00b7 specialised media" },
+    { key:"video", label:"Video \u00b7 creators" }
+  ];
+  state.lastList = [];
+  groups.forEach(g => {
+    const items = list.filter(c => c.type === g.key);
+    if(!items.length) return;
+    print(g.label, "sub");
+    items.forEach(c => {
+      print(`<span class="clip">
+          <a href="${c.url}" target="_blank" rel="noopener">${c.outlet}</a>
+          <span class="ct">${c.title}</span>
+        </span>`);
+    });
+    print("");
+  });
+  print(list.length + " entries \u00b7 source: " + (state.clipSource === "external" ? "live index" : "local cache"), "faint");
+}});
+
 defc({ name:"presskit", aliases:["press"], desc:"Press kit and media material.", visible:true, run(){
   print("Press Kit", "head");
   printLines([
-    "Logos, key art, screenshots, fact sheet and studio information",
-    "for press, content creators and event organisers."
+    "Logos, key art, screenshots, fact sheet and studio information for press, content creators and event organisers."
   ], "dim");
   print("");
   table([
@@ -1056,7 +1184,61 @@ updateSecretCount(); glitch(2);
 defc({ name:"skip", desc:"", visible:false, run(){ print("Boot already completed.", "dim"); }});
 
 /* sections that get the glitch cut when you land on them */
-const SECTIONS = new Set(["help","about","games","presskit","contact","play","archive"]);
+const SECTIONS = new Set(["help","about","games","presskit","contact","play","archive","clippings"]);
+
+/* ---------- CLIPPINGS LOADER ----------
+   Runs once at start, in the background. If it succeeds the external list
+   replaces the embedded one; if it fails nothing happens and the fallback
+   stays. The site never waits for it and never breaks because of it. */
+function parseCSV(text){
+  const rows = [];
+  const lines = text.trim().split(/\r?\n/);
+  const head = lines.shift().split(",").map(s => s.trim().toLowerCase().replace(/^"|"$/g, ""));
+  lines.forEach(line => {
+    const cells = [];
+    let cur = "", q = false;
+    for(let i = 0; i < line.length; i++){
+      const ch = line[i];
+      if(ch === '"' ){ if(q && line[i+1] === '"'){ cur += '"'; i++; } else q = !q; }
+      else if(ch === "," && !q){ cells.push(cur); cur = ""; }
+      else cur += ch;
+    }
+    cells.push(cur);
+    const o = {};
+    head.forEach((k, i) => o[k] = (cells[i] || "").trim());
+    if(o.url) rows.push(o);
+  });
+  return rows;
+}
+
+function normaliseClip(c){
+  const url = (c.url || "").trim();
+  const isVideo = /youtube\.com|youtu\.be|twitch\.tv/i.test(url);
+  return {
+    outlet: c.outlet || c.source || "Unknown",
+    title:  c.title  || "",
+    url,
+    game:   c.game   || "mystery-of-silence",
+    type:   (c.type || "").toLowerCase().startsWith("v") || isVideo ? "video" : "press"
+  };
+}
+
+async function loadClippings(){
+  try{
+    const res = await fetch(CLIPPINGS_SOURCE, { cache:"no-cache" });
+    if(!res.ok) throw new Error(res.status);
+    const raw = CLIPPINGS_SOURCE.endsWith(".csv")
+      ? parseCSV(await res.text())
+      : await res.json();
+    const list = (Array.isArray(raw) ? raw : raw.clippings || []).map(normaliseClip).filter(c => c.url);
+    if(list.length){
+      state.clippings = list;
+      state.clipSource = "external";
+    }
+  }catch(e){
+    state.clipSource = "embedded";   // silent: the fallback is already loaded
+  }
+}
 
 /* ---------- PARSER ---------- */
 function lev(a, b){
@@ -1263,24 +1445,45 @@ const win = $("#win"), winBody = $("#winBody"), winTitle = $("#winTitle"), winPa
 
 function openProject(p){
   state.view = "window";
+  state.lastProject = p.slug;
   winTitle.textContent = p.slug.toUpperCase();
   winPath.textContent = "/projects/" + p.slug;
+  // sheet order: 1 title · 2 image · 3 description · 4 data · 5 store buttons
+  // one button per store, not per platform: Windows and Mac both point at Steam
+  const seen = new Set();
+  const stores = [
+    ...p.links,
+    ...(p.platformGroups || []).flatMap(g => g.items.filter(i => i.url).map(i => ({ label:i.name, url:i.url })))
+  ].filter(l => !seen.has(l.url) && seen.add(l.url));
+  const pending = (p.platformGroups || []).flatMap(g => g.items.filter(i => !i.url).map(i => i.name));
+
   winBody.innerHTML = `
     <h2>${p.title}</h2>
     <div class="tag">${p.tagline}</div>
-    <div class="row"><span>Status</span><span>${p.status.toUpperCase()}${p.year ? " · " + p.year : ""}</span></div>
-    <div class="row"><span>Platforms</span><span>${p.platforms.join(" · ")}</span></div>
-    <div class="row"><span>Tags</span><span>${p.tags.join(" · ")}</span></div>
+
     ${p.media
-      ? `<div class="shot"><img src="${p.media}" alt="${p.title}"></div>`
+      ? `<div class="shot ph"><img src="${p.media}" alt="${p.title}"></div>`
       : `<div class="plate">NO MEDIA IN PUBLIC INDEX</div>`}
+
     <p>${p.summary}</p>
     ${p.sealed
       ? `<p class="note">This entry is not cleared for release. Everything above is redacted at render time.</p>` : ""}
-    ${p.links.length
-      ? `<div class="links">${p.links.map(l => `<a href="${l.url}" target="_blank" rel="noopener">${l.label} ↗</a>`).join("")}</div>`
+
+    <div class="row"><span>Status</span><span>${p.status.toUpperCase()}${p.year ? " \u00b7 " + p.year : ""}</span></div>
+    ${p.platformGroups
+      ? p.platformGroups.map(g =>
+          `<div class="row"><span>${g.label}</span><span>${g.items.map(i => i.name).join(" \u00b7 ")}</span></div>`).join("")
+      : `<div class="row"><span>Platforms</span><span>${p.platforms.join(" \u00b7 ")}</span></div>`}
+    <div class="row"><span>Tags</span><span>${p.tags.join(" \u00b7 ")}</span></div>
+
+    ${stores.length
+      ? `<div class="links">${stores.map(l => `<a href="${l.url}" target="_blank" rel="noopener">${l.label} \u2197</a>`).join("")}
+         ${pending.length ? `<span class="soonbtn">${pending.join(" \u00b7 ")} soon</span>` : ""}</div>`
       : `<p class="note">No links configured yet for this entry.</p>`}
+
     ${p.hidden ? `<p class="note">This entry references a file that is not in the public index: <b>${p.hidden}</b></p>` : ""}
+    ${state.clippings.some(c => c.game === p.slug)
+      ? `<p class="note">Type <span class="cmd" data-cmd="clippings ${p.slug}" role="button" tabindex="0">clipping</span> to read what the press said.</p>` : ""}
   `;
   win.hidden = false;
   glitch(.9); SFX.open();
@@ -1662,9 +1865,13 @@ function bootIdle(){
   state.bootIdle = true;
   $("#bootLines").textContent = BOOT.join("\n") + "\n";
   $("#bootHint").hidden = false;
-  $("#boot").insertBefore(promptWrap, $("#skip"));
-  $("#skip").textContent = "Enter system";
-  if(!coarse) input.focus();
+  $("#langs").hidden = false;
+  $("#langEs").classList.toggle("locked", !LANGS.es.available);
+  $("#skip").hidden = true;
+  if(!coarse){
+    $("#boot").insertBefore(promptWrap, $("#langs"));
+    input.focus();
+  }
 }
 
 function finishBoot(withBanner){
@@ -1692,6 +1899,9 @@ function reboot(){
   $("#bootLines").textContent = "";
   $("#bootHint").hidden = true;
   $("#skip").textContent = "Skip boot";
+  $("#skip").hidden = false;
+  $("#langs").hidden = true;
+  $("#langNote").hidden = true;
   $("#boot").hidden = false;
   $("#boot").insertBefore(promptWrap, $("#skip"));
   input.value = ""; syncEcho();
@@ -1717,13 +1927,33 @@ $("#skip").addEventListener("click", () => {
   if(!state.bootIdle) bootIdle(); else finishBoot(true);
   if(!coarse) input.focus();
 });
+
+function pickLang(code){
+  const l = LANGS[code];
+  if(!l.available){
+    // the system answers in character: the module simply isn't there
+    SFX.err(); glitch(1.3);
+    const n = $("#langNote");
+    n.hidden = false;
+    n.textContent = "ES // LANGUAGE PACK NOT INSTALLED \u2014 scheduled for a future build.";
+    return;
+  }
+  state.lang = code;
+  document.documentElement.lang = code;
+  finishBoot(true);
+}
+$("#langs").addEventListener("click", e => {
+  const b = e.target.closest("button[data-lang]");
+  if(b) pickLang(b.dataset.lang);
+});
+
 $("#boot").addEventListener("click", e => {
   if(e.target.closest("button, .cmd")) return;
-  if(state.bootIdle) input.focus();
+  if(state.bootIdle && !coarse) input.focus();   // on touch, only the buttons enter
 });
 document.addEventListener("keydown", e => {
   if(state.booted) return;
-  if(e.key === "Escape"){ if(!state.bootIdle) bootIdle(); else finishBoot(true); }
+  if(e.key === "Escape"){ if(!state.bootIdle) bootIdle(); else pickLang("en"); }
 });
 
 /* ---------- CLOCK ---------- */
@@ -1742,6 +1972,7 @@ fav.rel = "icon"; fav.href = ASSETS.flag;
 document.head.appendChild(fav);
 
 document.body.dataset.crt = state.crt ? "on" : "off";
+loadClippings();
 updateSecretCount();
 syncEcho();
 if(!coarse) input.focus();   // typing works from the first frame
