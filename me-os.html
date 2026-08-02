@@ -450,7 +450,7 @@ body[data-crt="off"] #vignette{display:none !important}
       <b>ME/OS</b>
     </span>
     <span class="meta">
-      <span>Build 2026.08</span>
+      <span id="buildTag">beta</span>
       <span id="secretCount">Secrets 0/6</span>
     </span>
     <span class="sep"></span>
@@ -580,8 +580,9 @@ const CLIPPINGS = [
 const CONFIG = {
   name: "Making Enemies",
   systemName: "ME/OS",
-  version: "1.0",
+  version: "1.0",          // the fictional OS version
   build: "2026.08",
+  release: "beta v2.6",    // real build of this site — bump on every saved version
   domain: "makingenemies.es",
   contact: {
     email: "makingenemiesgames@gmail.com",
@@ -1261,6 +1262,7 @@ defc({ name:"status", desc:"", visible:false, run(){
   table([
     ["system", CONFIG.systemName + " v" + CONFIG.version],
     ["build", CONFIG.build],
+    ["release", CONFIG.release],
     ["sound", state.sound ? "on" : "off"],
     ["secrets", n + " / " + SECRET_TOTAL + " found"],
     ["pong", state.scores.pong != null ? "best win " + state.scores.pong : "no record"],
@@ -2027,6 +2029,7 @@ function localeBootLines(){
 const BOOT = [
   "MAKING ENEMIES OPERATING SYSTEM v1.0",
   "© 2026 MAKING ENEMIES",
+  "BUILD ................ " + CONFIG.release.toUpperCase(),
   "",
   "MEM CHECK ............ 640K OK",
   "VIDEO ................ MONOCHROME",
@@ -2041,7 +2044,7 @@ const BOOT = [
 
 function banner(){
   print("MAKING ENEMIES", "big");
-  print("Hostile Creative System · Build " + CONFIG.build, "faint");
+  print("Hostile Creative System · " + CONFIG.release, "faint");
   print("");
   print('Type ' + cmdLink("help") + ' to begin. Some commands are not on the list.', "dim");
   print("");
@@ -2152,6 +2155,7 @@ fav.rel = "icon"; fav.href = ASSETS.flag;
 document.head.appendChild(fav);
 
 document.body.dataset.crt = state.crt ? "on" : "off";
+document.getElementById("buildTag").textContent = CONFIG.release;
 document.getElementById("langBtn").textContent = "Lang " + state.lang.toUpperCase();
 document.documentElement.lang = state.lang;
 loadClippings();
