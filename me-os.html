@@ -97,8 +97,8 @@ body[data-crt="off"] #vignette{display:none !important}
 #bar b{font-weight:500; color:var(--text)}
 #bar .meta{display:none; gap:14px}
 @media(min-width:760px){ #bar .meta{display:flex} }
-#soundBtn{letter-spacing:.09em; text-transform:uppercase; color:var(--muted); border:1px solid var(--hair); padding:2px 8px}
-#soundBtn:hover,#soundBtn:focus-visible{color:var(--text); border-color:var(--border)}
+#langBtn,#soundBtn{letter-spacing:.09em; text-transform:uppercase; color:var(--muted); border:1px solid var(--hair); padding:2px 8px}
+#langBtn:hover,#langBtn:focus-visible,#soundBtn:hover,#soundBtn:focus-visible{color:var(--text); border-color:var(--border)}
 
 /* ---------- STAGE ---------- */
 #stage{position:relative; overflow:hidden; z-index:10; background:#000}
@@ -170,6 +170,12 @@ body[data-crt="off"] #vignette{display:none !important}
 .person{display:flex; flex-direction:column; gap:.6em}
 .person .face{border:1px solid var(--hair); aspect-ratio:1/1; overflow:hidden; line-height:0}
 .person .face img{width:100%; height:100%; object-fit:cover; display:block; image-rendering:pixelated}
+.person .face.blank{
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.5em;
+  background:repeating-linear-gradient(45deg, rgba(255,255,255,.028) 0 2px, transparent 2px 7px);
+}
+.person .init{font-size:1.7em; letter-spacing:.16em; color:var(--muted); line-height:1}
+.person .lbl{font-size:.62em; letter-spacing:.22em; text-transform:uppercase; color:var(--dim)}
 .person .who{display:flex; flex-direction:column; gap:1px; font-size:.88em}
 .person .n{color:var(--text)}
 .person .r{color:var(--muted)}
@@ -180,6 +186,8 @@ body[data-crt="off"] #vignette{display:none !important}
 .clip a{color:var(--text); text-decoration:none; border-bottom:1px solid var(--border); align-self:flex-start}
 .clip a:hover,.clip a:focus-visible{background:var(--text); color:var(--bg); border-color:var(--text)}
 .clip .ct{color:var(--muted); font-size:.9em}
+.cmd.ext{text-decoration:none}
+.cmd.ext::after{content:" \2197"; color:var(--dim); font-size:.85em}
 
 /* store button that isn't live yet */
 .soonbtn{
@@ -335,23 +343,6 @@ body[data-crt="off"] #vignette{display:none !important}
   #bootHint .coarse{display:inline}
 }
 
-/* language selector */
-#langs{display:flex; gap:10px; margin-top:1.4em}
-#langs button{
-  border:1px solid var(--border); padding:11px 26px;
-  font-size:.9em; letter-spacing:.22em; color:var(--muted);
-}
-#langs button:hover,#langs button:focus-visible{background:var(--text); color:var(--bg); border-color:var(--text)}
-#langs button.locked{border-style:dashed; color:var(--dim)}
-#langNote{margin-top:.9em; color:var(--dim); font-size:.86em; letter-spacing:.06em}
-
-#skip{
-  position:fixed; right:var(--pad); bottom:calc(var(--pad) + env(safe-area-inset-bottom));
-  border:1px solid var(--border); padding:7px 15px;
-  font-size:.76em; letter-spacing:.14em; text-transform:uppercase; color:var(--muted);
-}
-#skip:hover,#skip:focus-visible{background:var(--text); color:var(--bg)}
-
 .gl{position:relative; display:inline-block}
 .gl::before,.gl::after{
   content:attr(data-t); position:absolute; left:0; top:0; width:100%;
@@ -423,6 +414,7 @@ body[data-crt="off"] #vignette{display:none !important}
     </span>
     <span class="sep"></span>
     <span id="clock" class="meta"><span>--:--:--</span></span>
+    <button id="langBtn" aria-label="System language">Lang EN</button>
     <button id="soundBtn" aria-label="Toggle system sound">Sound on</button>
   </header>
 
@@ -477,15 +469,9 @@ body[data-crt="off"] #vignette{display:none !important}
   <div id="bootLogo"><img id="bootMark" alt="Making Enemies"><small>Hostile Creative System</small></div>
   <div id="bootLines"></div>
   <div id="bootHint" hidden>
-    <span class="fine">Select a language to begin — or type a command.</span>
-    <span class="coarse">Select a language to begin.</span>
+    <span class="fine">Type <span class="cmd" data-cmd="help">help</span> to begin — or any command you can guess.</span>
+    <span class="coarse">Tap anywhere to begin.</span>
   </div>
-  <div id="langs" hidden role="group" aria-label="Language">
-    <button id="langEs" data-lang="es">ES</button>
-    <button id="langEn" data-lang="en">EN</button>
-  </div>
-  <div id="langNote" hidden></div>
-  <button id="skip">Skip boot</button>
 </div>
 
 <script>
@@ -503,9 +489,14 @@ const ASSETS = {"flag": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAZAAAADUC
    ============================================================ */
 
 const LANGS = {
-  en: { code:"en", label:"English",  available:true  },
-  es: { code:"es", label:"Espa\u00f1ol", available:false }   // pack not installed yet
+  en: { code:"en", label:"English",  tag:"EN",    available:true  },
+  es: { code:"es", label:"Espa\u00f1ol", tag:"ES-ES", available:false }   // pack not installed yet
 };
+
+/* The system reads the locale, it never asks for it. Spanish, or the rest
+   of the world. If the detected pack isn't installed, it says so in the
+   boot log and falls back \u2014 no gate, no dialog, no decision to make. */
+const DETECTED = (navigator.language || "en").toLowerCase().startsWith("es") ? "es" : "en";
 
 /* ---------- CLIPPINGS ----------
    The list lives OUTSIDE this file so it can grow without touching the site.
@@ -556,7 +547,16 @@ const CORE = [
   { name:"Beatriz Díaz",   role:"Marketing · Writer",          handle:"@bdiaztobarra",  img:SQ.bea500 }
 ];
 const SUSPECTS = [
-  { name:"Antonio Vozmediano", role:"Composer · SFX", handle:"@AVozmedianoA", img:SQ.anto500 }
+  { name:"Antonio Vozmediano", role:"Composer · SFX", handle:"@AVozmedianoA", img:SQ.anto500 },
+  { name:"Donut Droid",        role:"Composer",         handle:"",              img:null },
+  { name:"Sora",               role:"Artist Assistant", handle:"",              img:null }
+];
+
+/* credits: names only, the list will keep growing */
+const FRIENDS = [
+  "Alberto Paz",
+  "Megui Pascual",
+  "Españita Adventure Discord"
 ];
 
 /* ---------- DATA: PROJECTS ---------- */
@@ -582,7 +582,7 @@ const PROJECTS = [
       ]},
       { label:"Mobile",   items:[
         { name:"iOS",     url:"https://apps.apple.com/us/app/mystery-of-silence/id6757854493" },
-        { name:"Android", url:null }   // PASTE GOOGLE PLAY URL HERE
+        { name:"Android", url:"https://play.google.com/store/apps/details?id=com.makingenemies.mos&hl=es_419" }
       ]}
     ],
     platforms: ["Windows", "Mac", "PlayStation", "Nintendo", "Xbox", "iOS", "Android"],
@@ -637,8 +637,9 @@ const GAMES = [
 const state = {
   booted:false, sound:true,
   history:[], hi:-1,
-  secrets:{}, scores:{}, view:null, hovered:null, crt:false, lang:"en",
+  secrets:{}, scores:{}, view:null, hovered:null, crt:false,
   clippings:CLIPPINGS, clipSource:"embedded", lastProject:null,
+  lang:LANGS[DETECTED].available ? DETECTED : "en",
   pendingAnchor:false, anchorEl:null
 };
 const SECRET_TOTAL = 5; // the 7-0 Pong award is paused along with Pong
@@ -701,6 +702,12 @@ function flushNow(){ while(lineQueue.length) paint(lineQueue.shift()); flushing 
 function clearOut(){ lineQueue = []; flushing = false; out.innerHTML = ""; }
 
 function printLines(arr, cls){ arr.forEach(l => print(l, cls)); }
+function initials(name){
+  return name.trim().split(/\s+/).slice(0, 2).map(w => w[0]).join("").toUpperCase();
+}
+function extLink(url, label){
+  return `<a class="cmd ext" href="${url}" target="_blank" rel="noopener">${label}</a>`;
+}
 function cmdLink(c, label){ return `<span class="cmd" data-cmd="${c}" role="button" tabindex="0">${label||c}</span>`; }
 function table(pairs){
   const rows = pairs.map(([a,b]) => `<span>${a}</span><span>${b}</span>`).join("");
@@ -790,45 +797,58 @@ defc({ name:"help", desc:"List available commands.", visible:true, run(){
 
 defc({ name:"about", aliases:["team","crew","whois","aboutus"], desc:"Who we are.", visible:true, run(){
   print("Making Enemies", "head");
-  // one string per paragraph: .ln already wraps, so hand-wrapping breaks mobile
+  print("A small creative studio founded by Ayose Trujillo.", "dim");
+
+  print("01 \u00b7 Origin", "sub");
   printLines([
-    "Making Enemies is a small creative studio founded by Ayose Trujillo.",
-    "",
     "It began in 2020 during game jams, building experimental games in forty-eight hours. There was never enough time to overthink anything. Only enough time to finish.",
     "",
-    "That way of working slowly became something bigger.",
-    "",
-    "In 2025, the studio released its first commercial game, Scholar Adventure: Mystery of Silence, published by DevilishGames. The game was warmly received by both players and the press, earning an aggregate score of 82/100, according to DeVuego\u2019s compilation of reviews across digital platforms.",
-    "",
-    "The studio is currently working on its next project, the second installment of the Scholar Adventure series.",
-    "",
-    "Today, Making Enemies creates videogames, illustrations, music and interactive projects.",
-    "",
+    "That way of working slowly became something bigger."
+  ], "dim");
+
+  print("02 \u00b7 Present", "sub");
+  print("In 2025, the studio released its first commercial game, "
+    + cmdLink("open mystery-of-silence", "Scholar Adventure: Mystery of Silence") + ", published by "
+    + extLink("https://www.devilishgames.com", "DevilishGames")
+    + ". The game was warmly received by both players and the press, earning an aggregate score of 82/100, according to "
+    + extLink("https://www.devuego.es/fjuego/scholar-adventure-mystery-of-silence", "DeVuego")
+    + "\u2019s compilation of reviews across digital platforms.", "dim");
+  print("");
+  print("Today, Making Enemies creates videogames, illustrations, music and interactive projects.", "dim");
+
+  print("03 \u00b7 Next", "sub");
+  print("The studio is currently working on its next project, the second installment of the Scholar Adventure series.", "dim");
+  print("");
+  printLines([
     "Everything here belongs to the same archive.",
     "",
     "Some files are easy to find.",
     "",
     "Others are still hidden."
   ], "dim");
-  print("");
-  print("Press and coverage: " + cmdLink("clippings"), "faint");
 
   const card = (m) => `
     <span class="person">
-      <span class="face"><img src="${m.img}" alt="${m.name}"></span>
+      ${m.img
+        ? `<span class="face"><img src="${m.img}" alt="${m.name}"></span>`
+        : `<span class="face blank" role="img" aria-label="No portrait on file for ${m.name}">
+             <span class="init">${initials(m.name)}</span>
+             <span class="lbl">No image</span>
+           </span>`}
       <span class="who">
         <span class="n">${m.name}</span>
-        <span class="r">${m.role}</span>
-        <span class="hd">${m.handle}</span>
+        ${m.role ? `<span class="r">${m.role}</span>` : ""}
+        ${m.handle ? `<span class="hd">${m.handle}</span>` : ""}
       </span>
     </span>`;
 
   print("The two of us", "sub");
   print(`<span class="people">${CORE.map(card).join("")}</span>`);
-  print("Usual suspects", "sub");
+  print("Collaborators", "sub");
   print(`<span class="people narrow">${SUSPECTS.map(card).join("")}</span>`);
   print("");
-  print("Collaborators who keep showing up at the scene.", "faint");
+  print("Press and coverage: " + cmdLink("clippings")
+      + "   ·   Credits: " + cmdLink("friends", "more friends than enemies"), "faint");
 }});
 
 defc({ name:"games", aliases:["projects","ls","dir"], desc:"Games we make.", visible:true, run(){
@@ -938,6 +958,15 @@ defc({ name:"contact", desc:"How to reach us.", visible:true, run(){
   print("See " + cmdLink("about") + " for who answers that address.", "faint");
 }});
 
+defc({ name:"friends", aliases:["credits","morefriends"], desc:"", visible:false, run(){
+  print("More Friends Than Enemies", "head");
+  print("People who helped, tested, argued, or simply showed up.", "dim");
+  print("");
+  FRIENDS.forEach(n => print(n));
+  print("");
+  print("The list keeps growing.", "faint");
+}});
+
 defc({ name:"clippings", aliases:["clipping","press-coverage","reviews"], usage:"clippings", desc:"Press and coverage.", visible:true, run(args){
   // inside a project, `clipping` narrows to that game automatically
   let filter = (args[0] || "").toLowerCase();
@@ -1019,6 +1048,23 @@ defc({ name:"back", aliases:["exit"], desc:"Close the current view.", visible:tr
 
 defc({ name:"home", desc:"Return to the terminal.", visible:true, run(){
   closeView(); clearOut(); banner();
+}});
+
+defc({ name:"lang", aliases:["locale","language"], usage:"lang es|en", desc:"System language.", visible:true, run(args){
+  const v = (args[0] || "").toLowerCase();
+  if(!v){
+    print("Locale", "head");
+    table([
+      ["detected", LANGS[DETECTED].tag],
+      ["running",  LANGS[state.lang].tag + " \u00b7 " + LANGS[state.lang].label],
+      ["installed", Object.values(LANGS).filter(l => l.available).map(l => l.tag).join(", ")]
+    ]);
+    print("");
+    print("Use: lang es | lang en", "faint");
+    return;
+  }
+  if(!LANGS[v]){ print(`Unknown locale: "${v}"`, "err"); SFX.err(); return; }
+  if(setLang(v)) print("Locale set to " + LANGS[v].tag + ".", "dim");
 }});
 
 defc({ name:"crt", usage:"crt on|off", desc:"Toggle screen texture.", visible:true, run(args){
@@ -1184,7 +1230,7 @@ updateSecretCount(); glitch(2);
 defc({ name:"skip", desc:"", visible:false, run(){ print("Boot already completed.", "dim"); }});
 
 /* sections that get the glitch cut when you land on them */
-const SECTIONS = new Set(["help","about","games","presskit","contact","play","archive","clippings"]);
+const SECTIONS = new Set(["help","about","games","presskit","contact","play","archive","clippings","friends"]);
 
 /* ---------- CLIPPINGS LOADER ----------
    Runs once at start, in the background. If it succeeds the external list
@@ -1837,6 +1883,15 @@ function Snake(){
 /* ============================================================
    BOOT
    ============================================================ */
+function localeBootLines(){
+  const l = LANGS[DETECTED];
+  if(l.available) return ["LOCALE ............... " + l.tag + " DETECTED"];
+  return [
+    "LOCALE ............... " + l.tag + " DETECTED",
+    "                      PACK NOT INSTALLED \u00b7 FALLBACK EN"
+  ];
+}
+
 const BOOT = [
   "MAKING ENEMIES OPERATING SYSTEM v1.0",
   "© 2026 MAKING ENEMIES",
@@ -1844,6 +1899,7 @@ const BOOT = [
   "MEM CHECK ............ 640K OK",
   "VIDEO ................ MONOCHROME",
   "AUDIO ................ SYNTH / OPTIONAL",
+  ...localeBootLines(),
   "ARCHIVE .............. MOUNTED",
   "CLASSIFIED ........... LOCKED",
   "",
@@ -1865,11 +1921,8 @@ function bootIdle(){
   state.bootIdle = true;
   $("#bootLines").textContent = BOOT.join("\n") + "\n";
   $("#bootHint").hidden = false;
-  $("#langs").hidden = false;
-  $("#langEs").classList.toggle("locked", !LANGS.es.available);
-  $("#skip").hidden = true;
   if(!coarse){
-    $("#boot").insertBefore(promptWrap, $("#langs"));
+    $("#boot").insertBefore(promptWrap, $("#bootHint").nextSibling);
     input.focus();
   }
 }
@@ -1898,12 +1951,8 @@ function reboot(){
   state.booted = false; state.bootIdle = false;
   $("#bootLines").textContent = "";
   $("#bootHint").hidden = true;
-  $("#skip").textContent = "Skip boot";
-  $("#skip").hidden = false;
-  $("#langs").hidden = true;
-  $("#langNote").hidden = true;
   $("#boot").hidden = false;
-  $("#boot").insertBefore(promptWrap, $("#skip"));
+  if(!coarse) $("#boot").appendChild(promptWrap);
   input.value = ""; syncEcho();
   glitch(2);
   runBoot();
@@ -1923,37 +1972,36 @@ function runBoot(){
   tick();
 }
 
-$("#skip").addEventListener("click", () => {
-  if(!state.bootIdle) bootIdle(); else finishBoot(true);
-  if(!coarse) input.focus();
-});
 
-function pickLang(code){
+function setLang(code){
   const l = LANGS[code];
+  if(!l){ return false; }
   if(!l.available){
-    // the system answers in character: the module simply isn't there
     SFX.err(); glitch(1.3);
-    const n = $("#langNote");
-    n.hidden = false;
-    n.textContent = "ES // LANGUAGE PACK NOT INSTALLED \u2014 scheduled for a future build.";
-    return;
+    if(state.booted){
+      print(l.tag + " // LANGUAGE PACK NOT INSTALLED", "err");
+      print("Scheduled for a future build. Running in EN.", "dim");
+    }
+    return false;
   }
   state.lang = code;
   document.documentElement.lang = code;
-  finishBoot(true);
+  $("#langBtn").textContent = "Lang " + code.toUpperCase();
+  return true;
 }
-$("#langs").addEventListener("click", e => {
-  const b = e.target.closest("button[data-lang]");
-  if(b) pickLang(b.dataset.lang);
+$("#langBtn").addEventListener("click", () => {
+  setLang(state.lang === "en" ? "es" : "en");
 });
 
 $("#boot").addEventListener("click", e => {
   if(e.target.closest("button, .cmd")) return;
-  if(state.bootIdle && !coarse) input.focus();   // on touch, only the buttons enter
+  // with no skip button, tapping the screen is what jumps to the end
+  if(!state.bootIdle){ bootIdle(); return; }
+  if(coarse) finishBoot(true); else input.focus();
 });
 document.addEventListener("keydown", e => {
   if(state.booted) return;
-  if(e.key === "Escape"){ if(!state.bootIdle) bootIdle(); else pickLang("en"); }
+  if(e.key === "Escape"){ if(!state.bootIdle) bootIdle(); else finishBoot(true); }
 });
 
 /* ---------- CLOCK ---------- */
@@ -1972,6 +2020,8 @@ fav.rel = "icon"; fav.href = ASSETS.flag;
 document.head.appendChild(fav);
 
 document.body.dataset.crt = state.crt ? "on" : "off";
+document.getElementById("langBtn").textContent = "Lang " + state.lang.toUpperCase();
+document.documentElement.lang = state.lang;
 loadClippings();
 updateSecretCount();
 syncEcho();
