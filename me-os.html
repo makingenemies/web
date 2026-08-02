@@ -5,7 +5,7 @@
 <meta name="color-scheme" content="dark">
 <meta name="theme-color" content="#000000">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
-<title>MAKING ENEMIES OS v1.0</title>
+<title>MAKING ENEMIES OS</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
@@ -582,14 +582,15 @@ const CONFIG = {
   systemName: "ME/OS",
   version: "1.0",          // the fictional OS version
   build: "2026.08",
-  release: "beta v2.6",    // real build of this site — bump on every saved version
+  release: "beta v2.7",    // real build of this site — bump on every saved version
+  channel: "[UNSTABLE]",
   domain: "makingenemies.es",
   contact: {
     email: "makingenemiesgames@gmail.com",
     links: [
       { label: "Steam",   url: "https://store.steampowered.com/app/3929410/Scholar_Adventure_Mystery_of_Silence/" },
       { label: "itch.io", url: "https://makingenemies.itch.io/" },
-      { label: "Press kit", url: "https://drive.google.com/file/d/1WahPQx2aFWjE08ZvPuB_L9q5Dx_gvOlp/view?usp=sharing" }
+      { label: "Press kit", url: "https://www.makingenemies.es/ME-PressKit-web.zip" }
     ]
   }
 };
@@ -990,7 +991,7 @@ defc({ name:"play", aliases:["insertcoin"], usage:"play [program]", desc:"Run a 
 defc({ name:"archive", desc:"Browse public archive.", visible:true, run(){
   print("Archive · /archive", "head");
   table([
-    ["press/", cmdLink("presskit", "press kit") + " — Making Enemies, PDF"],
+    ["press/", cmdLink("presskit", "press kit") + " — ME-PressKit-web.zip"],
     ["itch/", `<a class="cmd" href="https://makingenemies.itch.io/" target="_blank" rel="noopener">jam games on itch.io</a>`],
     ["devlogs/", "Production notes — empty"],
     ["music/", "Soundtracks by Antonio Vozmediano — empty"],
@@ -1075,9 +1076,10 @@ defc({ name:"presskit", aliases:["press"], desc:"Press kit and media material.",
     ["contact", `<a class="cmd" href="mailto:${CONFIG.contact.email}">${CONFIG.contact.email}</a>`]
   ]);
   print("");
-  print(`<span class="bigbtn pending" role="button" tabindex="0" data-pending="1">Download press kit</span>`);
+  const kit = CONFIG.contact.links.find(l => l.label === "Press kit");
+  print(`<a class="bigbtn" href="${kit.url}" download>Download press kit ↓</a>`);
   print("");
-  print("Package not wired up yet — the file goes here when it's ready.", "faint");
+  print("ME-PressKit-web.zip · makingenemies.es", "faint");
 }});
 
 defc({ name:"steam", desc:"", visible:false, run(){
@@ -1364,16 +1366,28 @@ function execute(raw){
   flushNow();   // whatever was still typing lands at once, then this starts
   if(!state.booted) finishBoot(false);   // the command that wakes the machine
 
-  // if this is a section, its echo line becomes the scroll anchor
-  const peek = findCmd(line.split(" ")[0].toLowerCase());
-  if(peek && SECTIONS.has(peek.name)) state.pendingAnchor = true;
+  const parts = line.split(" ");
+  const name = parts[0].toLowerCase();
+  const args = parts.slice(1);
+
+  // resolve first, print second: a recognised command starts on a clean
+  // screen, an unrecognised one keeps whatever was there so the mistake
+  // is readable in context.
+  let c = findCmd(name);
+  if(!c && name.startsWith("/")){
+    c = findCmd(name.split("/").filter(Boolean).pop());
+  }
+  const answering = state.awaiting === "classified";
+
+  if(c || answering) clearOut();
+  if(c && SECTIONS.has(c.name)) state.pendingAnchor = true;
 
   print(line, "echo");
   state.history.push(line);
   state.hi = -1;
 
   // pending security question
-  if(state.awaiting === "classified"){
+  if(answering){
     state.awaiting = null;
     const ans = line.toLowerCase().replace(/[^a-z0-9- ]/g, "");
     if(ans === "silence" || ans === "unlock silence" || ans === "the silence"){
@@ -1382,23 +1396,11 @@ function execute(raw){
     // otherwise fall through and treat as a normal command
   }
 
-  const parts = line.split(" ");
-  const name = parts[0].toLowerCase();
-  const args = parts.slice(1);
-
-  const c = findCmd(name);
   if(c){
     SFX.enter();
     // entering a section gets the same glitch cut as opening a project
     if(SECTIONS.has(c.name)){ glitch(1); SFX.open(); }
     return c.run(args);
-  }
-
-  // direct path access: /archive/classified
-  if(name.startsWith("/")){
-    const seg = name.split("/").filter(Boolean).pop();
-    const alt = findCmd(seg);
-    if(alt){ SFX.enter(); return alt.run(args); }
   }
 
   SFX.err();
@@ -2027,9 +2029,8 @@ function localeBootLines(){
 }
 
 const BOOT = [
-  "MAKING ENEMIES OPERATING SYSTEM v1.0",
+  "MAKING ENEMIES OPERATING SYSTEM " + CONFIG.release + " " + CONFIG.channel,
   "© 2026 MAKING ENEMIES",
-  "BUILD ................ " + CONFIG.release.toUpperCase(),
   "",
   "MEM CHECK ............ 640K OK",
   "VIDEO ................ MONOCHROME",
