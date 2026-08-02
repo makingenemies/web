@@ -501,7 +501,7 @@ body[data-crt="off"] #vignette{display:none !important}
       <div class="winbar">
         <b id="winTitle">FILE</b><span id="winPath"></span>
         <span class="sep"></span>
-        <button id="winClose">Close · Esc</button>
+        <button id="winClose"></button>
       </div>
       <div id="winBody"></div>
     </section>
@@ -512,7 +512,7 @@ body[data-crt="off"] #vignette{display:none !important}
         <span class="sep"></span>
         <button id="viewerPrev" title="Previous">&lt;</button>
         <button id="viewerNext" title="Next">&gt;</button>
-        <button id="viewerClose">Close · Esc</button>
+        <button id="viewerClose"></button>
       </div>
       <div id="viewerStage"></div>
     </section>
@@ -521,7 +521,7 @@ body[data-crt="off"] #vignette{display:none !important}
       <div class="winbar">
         <b id="gameTitle">PROGRAM.EXE</b><span id="gameHud"></span>
         <span class="sep"></span>
-        <button id="gameExit">Exit · Esc</button>
+        <button id="gameExit"></button>
       </div>
       <div id="gameStage"><canvas id="gameCanvas"></canvas></div>
       <div id="gameFoot">
@@ -538,7 +538,7 @@ body[data-crt="off"] #vignette{display:none !important}
     <button data-cmd="presskit">Press Kit</button>
     <button data-cmd="about">About</button>
     <button data-cmd="contact">Contact</button>
-    <span class="hint">Tab completes · ↑↓ history · Esc closes</span>
+    <span class="hint"></span>
   </footer>
 
   <div id="flashLayer"></div>
@@ -548,10 +548,7 @@ body[data-crt="off"] #vignette{display:none !important}
 <div id="boot">
   <div id="bootLogo"><img id="bootMark" alt="Making Enemies"><small>Hostile Creative System</small></div>
   <div id="bootLines"></div>
-  <div id="bootHint" hidden>
-    <span class="fine">Type <span class="cmd" data-cmd="help">help</span> to begin — or any command you can guess.</span>
-    <span class="coarse">Tap anywhere to begin.</span>
-  </div>
+  <div id="bootHint" hidden></div>
 </div>
 
 <script>
@@ -570,7 +567,7 @@ const ASSETS = {"flag": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAZAAAADUC
 
 const LANGS = {
   en: { code:"en", label:"English",  tag:"EN",    available:true  },
-  es: { code:"es", label:"Espa\u00f1ol", tag:"ES-ES", available:false }   // pack not installed yet
+  es: { code:"es", label:"Espa\u00f1ol", tag:"ES-ES", available:true }
 };
 
 /* The system reads the locale, it never asks for it. Spanish, or the rest
@@ -591,7 +588,7 @@ const CONFIG = {
   systemName: "ME/OS",
   version: "1.0",          // the fictional OS version
   build: "2026.08",
-  release: "beta v3.0",    // real build of this site — bump on every saved version
+  release: "beta v3.1",    // real build of this site — bump on every saved version
   channel: "[UNSTABLE]",
   domain: "makingenemies.es",
   contact: {
@@ -612,13 +609,13 @@ const SHOTS_MOS = [{"cap": "The nave", "src": "data:image/jpeg;base64,/9j/4AAQSk
 
 /* ---------- DATA: PEOPLE ---------- */
 const CORE = [
-  { name:"Ayose Trujillo", role:"Founder · Creative Director", handle:"@ayosetrujillo", img:SQ.ayose500 },
-  { name:"Beatriz Díaz",   role:"Marketing · Writer",          handle:"@bdiaztobarra",  img:SQ.bea500 }
+  { name:"Ayose Trujillo", role:"Founder · Creative Director", es:{ role:"Fundador · Director creativo" }, handle:"@ayosetrujillo", img:SQ.ayose500 },
+  { name:"Beatriz Díaz",   role:"Marketing · Writer", es:{ role:"Marketing · Guion" }, handle:"@bdiaztobarra",  img:SQ.bea500 }
 ];
 const SUSPECTS = [
-  { name:"Antonio Vozmediano", role:"Composer · SFX", handle:"@AVozmedianoA", img:SQ.anto500 },
-  { name:"Donut Droid",        role:"Composer",         handle:"",              img:null },
-  { name:"Sora",               role:"Artist Assistant", handle:"",              img:null }
+  { name:"Antonio Vozmediano", role:"Composer · SFX", es:{ role:"Compositor · SFX" }, handle:"@AVozmedianoA", img:SQ.anto500 },
+  { name:"Donut Droid",        role:"Composer", es:{ role:"Compositor" }, handle:"", img:null },
+  { name:"Sora",               role:"Artist Assistant", es:{ role:"Asistente de arte" }, handle:"", img:null }
 ];
 
 /* credits: names only, the list will keep growing */
@@ -632,6 +629,7 @@ const FRIENDS = [
 const PROJECTS = [
   {
     slug: "mystery-of-silence",
+    es: { tagline:"Una abadía. Un voto de silencio. Un joven escritor en busca de inspiración.", summary:"Nuestro primer juego, publicado en 2025. Una aventura point-and-click donde William, un joven escritor en busca de inspiración, entra en una abadía envuelta en silencio. Lo que encuentra allí no es inspiración. Adaptado a consolas en 2026." },
     group: "Scholar Adventure",
     thumb: TH.mosThumbFull,
     title: "Scholar Adventure: Mystery of Silence",
@@ -666,6 +664,7 @@ const PROJECTS = [
   },
   {
     slug: "project-02",
+    es: { tagline:"Sin autorización.", summary:"Una entrada. Sin fecha, sin plataformas, sin imágenes. Existe, y has llegado pronto." },
     group: "Scholar Adventure",
     thumb: null,
     sealed: true,                       // absent from the index until a program yields the key
@@ -681,6 +680,7 @@ const PROJECTS = [
   },
   {
     slug: "le-canarien",
+    es: { tagline:"Encuentra tu legado. Cada muerte borrará tu identidad.", summary:"Encuentra tu legado. Cada muerte borrará tu identidad." },
     group: "Game Jams · LAB",
     compact: true,
     thumb: JAMTH.lecanarien,
@@ -698,6 +698,7 @@ const PROJECTS = [
   },
   {
     slug: "road-to-moncloa",
+    es: { tagline:"Gestiona tus recursos frente a la DUALIDAD política.", summary:"Deberás gestionar tus recursos para enfrentarte a la DUALIDAD política: conseguir votos a través de promesas o conseguir financiación de la empresa privada y lobbies." },
     group: "Game Jams · LAB",
     compact: true,
     thumb: JAMTH.moncloa,
@@ -715,6 +716,7 @@ const PROJECTS = [
   },
   {
     slug: "volt",
+    es: { tagline:"Plataformas 2D retro. Rio resuelve las anomalías de sus clientes.", summary:"Volt es un juego de plataformas en 2D de corte retro con estilo pixel-art donde controlas a Rio, un joven agente que se ocupa de resolver las anomalías de sus clientes." },
     group: "Game Jams · LAB",
     compact: true,
     thumb: JAMTH.volt,
@@ -732,6 +734,7 @@ const PROJECTS = [
   },
   {
     slug: "game-jams",
+    es: { tagline:"Cuarenta y ocho horas. Sin segundo borrador.", summary:"Donde empezó este estudio, en 2020. Las jams han sido nuestro campo de aprendizaje y nuestro laboratorio: títulos experimentales construidos en un fin de semana, casi todos más extraños que cualquier cosa que hubiéramos planeado." },
     group: "Game Jams · LAB",
     thumb: null,
     title: "Game Jams",
@@ -758,7 +761,7 @@ const state = {
   booted:false, sound:true,
   history:[], hi:-1,
   secrets:{}, scores:{}, view:null, hovered:null, crt:false,
-  media:null, mediaIndex:0, mediaList:[],
+  media:null, mediaIndex:0, mediaList:[], lastSection:null,
   viewStack:[],      // restore callbacks: closing pops back one level
   clippings:CLIPPINGS, clipSource:"embedded", lastProject:null,
   lang:LANGS[DETECTED].available ? DETECTED : "en",
@@ -899,6 +902,299 @@ function ambient(){
   }, wait);
 }
 
+
+/* ============================================================
+   I18N — every visible string lives here, in both languages.
+   t("key") reads the running locale and falls back to English.
+   ============================================================ */
+function pad(label, value){
+  const dots = ".".repeat(Math.max(1, 21 - label.length));
+  return label + " " + dots + " " + value;
+}
+
+const GROUPS_ES = { "Scholar Adventure":"Scholar Adventure", "Game Jams · LAB":"Game Jams · LAB" };
+
+const I18N = {
+  en: {
+    /* boot */
+    boot_mem:"MEM CHECK", boot_mem_v:"640K OK",
+    boot_video:"VIDEO", boot_video_v:"MONOCHROME",
+    boot_audio:"AUDIO", boot_audio_v:"SYNTH / OPTIONAL",
+    boot_locale:"LOCALE", boot_detected:"DETECTED",
+    boot_nopack:"PACK NOT INSTALLED · FALLBACK EN",
+    boot_archive:"ARCHIVE", boot_archive_v:"MOUNTED",
+    boot_class:"CLASSIFIED", boot_class_v:"LOCKED",
+    boot_starting:"BOOTING HOSTILE CREATIVE SYSTEM...",
+    boot_online:"SYSTEM ONLINE.",
+    hint_fine:'Type <span class="cmd" data-cmd="help">help</span> to begin — or any command you can guess.',
+    hint_coarse:"Tap anywhere to begin.",
+    banner_sub:"Hostile Creative System",
+    banner_hint:"Type {help} to begin. Some commands are not on the list.",
+
+    /* chrome */
+    chip_help:"Help", chip_games:"Games", chip_press:"Press Kit",
+    chip_about:"About", chip_contact:"Contact",
+    bar_hint:"Tab completes · ↑↓ history · Esc closes",
+    btn_sound_on:"Sound on", btn_sound_off:"Sound off",
+    btn_close:"Close · Esc", btn_exit:"Exit · Esc",
+    loading:"Loading…",
+
+    /* help */
+    d_help:"List available commands.", d_about:"Who we are.",
+    d_games:"Games we make.", d_open:"Open a project or file.",
+    d_play:"Run a program.", d_archive:"Browse public archive.",
+    d_contact:"How to reach us.", d_press:"Press kit and media material.",
+    d_clippings:"Press and coverage.", d_clear:"Clear the screen.",
+    d_history:"Show commands used this session.", d_back:"Close the current view.",
+    d_home:"Return to the terminal.", d_sound:"Toggle system sound.",
+    d_crt:"Toggle screen texture.", d_lang:"System language.",
+    d_restart:"Reboot the system.",
+    h_title:"Available commands", h_foot:"Not everything is on this list.",
+
+    /* about */
+    ab_title:"Making Enemies",
+    ab_lead:"A small creative studio founded by Ayose Trujillo.",
+    ab_1:"01 · Origin", ab_2:"02 · Present", ab_3:"03 · Next",
+    ab_origin_a:"It began in 2020 during game jams, building experimental games in forty-eight hours. There was never enough time to overthink anything. Only enough time to finish.",
+    ab_origin_b:"That way of working slowly became something bigger.",
+    ab_present_a:"In 2025, the studio released its first commercial game, ",
+    ab_present_b:", published by ",
+    ab_present_c:". The game was warmly received by both players and the press, earning an aggregate score of 82/100, according to ",
+    ab_present_d:"’s compilation of reviews across digital platforms.",
+    ab_present_e:"Today, Making Enemies creates videogames, illustrations, music and interactive projects.",
+    ab_next:"The studio is currently working on its next project, the second installment of the Scholar Adventure series.",
+    ab_end_a:"Everything here belongs to the same archive.",
+    ab_end_b:"Some files are easy to find.",
+    ab_end_c:"Others are still hidden.",
+    ab_core:"The two of us", ab_collab:"Collaborators",
+    ab_noimg:"No image", ab_noportrait:"No portrait on file for ",
+    ab_foot_press:"Press and coverage: ", ab_foot_credits:"   ·   Credits: ",
+    ab_credits_link:"more friends than enemies",
+
+    /* games */
+    g_title:"Games", g_mount:"&gt; mount /games/game-jams — {n} entries",
+    g_foot:"Use: open [slug] to see an entry · {more} for the full jam archive.",
+    g_play:"play ↗",
+
+    /* project sheet */
+    ps_status:"Status", ps_platforms:"Platforms", ps_tags:"Tags",
+    ps_nomedia:"NO MEDIA IN PUBLIC INDEX",
+    ps_sealed:"This entry is not cleared for release. Everything above is redacted at render time.",
+    ps_nolinks:"No links configured yet for this entry.",
+    ps_hidden:"This entry references a file that is not in the public index: ",
+    ps_clip:"Type {cmd} to read what the press said.",
+    ps_desktop:"Desktop", ps_consoles:"Consoles", ps_mobile:"Mobile",
+
+    /* play */
+    p_title:"Insert coin", p_online:"[ONLINE]", p_corrupt:"[CORRUPTED]", p_locked:"[LOCKED]",
+    p_foot:"Use: play [program] — or press a number. Example: {ex}",
+    p_unknown:'Unknown program: "{x}"',
+    p_damaged:" — sector damaged.", p_damaged2:"Recovery requires a key this system does not have yet.",
+    p_disabled:" — disabled.", p_disabled2:"Not available in this build.",
+    p_loading:"LOADING ",
+
+    /* press kit */
+    pk_title:"Press Kit",
+    pk_body:"Logos, key art, screenshots, fact sheet and studio information for press, content creators and event organisers.",
+    pk_studio:"studio", pk_founded:"founded", pk_founded_v:"2020 · game jams",
+    pk_based:"based in", pk_based_v:"Spain", pk_contact:"contact",
+    pk_btn:"Download press kit ↓",
+
+    /* contact */
+    c_title:"Contact", c_email:"email", c_web:"web", c_links:"links",
+    c_foot:"See {about} for who answers that address.",
+
+    /* archive */
+    a_title:"Archive · /archive",
+    a_press:"Press kit — ME-PressKit-web.zip",
+    a_itch:"jam games on itch.io",
+    a_devlogs:"Production notes — empty",
+    a_music:"Soundtracks by Antonio Vozmediano — empty",
+    a_class:"Restricted. Authorisation required",
+    a_note:"A note is pinned to the root of this directory:",
+    a_question:"“What remains when every voice disappears?”",
+    a_hint:"Use {cmd} if you think you know.",
+
+    /* clippings */
+    cl_title:"Clippings", cl_none:"Nothing recorded yet.",
+    cl_reviews:"Reviews · specialised press", cl_interviews:"Interviews · shows",
+    cl_features:"Features · news · selections", cl_video:"Video · gameplays · walkthroughs",
+    cl_index:"Aggregators · databases",
+    cl_foot:"{n} entries · source: {src}",
+    cl_live:"live index", cl_cache:"local cache",
+
+    /* friends + more */
+    fr_title:"More Friends Than Enemies",
+    fr_sub:"People who helped, tested, argued, or simply showed up.",
+    fr_foot:"The list keeps growing.",
+    mo_title:"More games", mo_sub:"More games at",
+    mo_foot:"Jam builds, prototypes and things that never got a name.",
+
+    /* system */
+    st_title:"System status", st_system:"system", st_build:"build", st_release:"release",
+    st_sound:"sound", st_secrets:"secrets", st_found:" found",
+    st_on:"on", st_off:"off", st_norecord:"no record", st_best:"best ",
+    st_foot:"{restart} reboots. {reset} wipes local progress.",
+    sy_sound_on:"Sound enabled.", sy_sound_off:"Sound disabled.",
+    sy_crt_on:"Screen texture enabled.", sy_crt_off:"Screen texture disabled — flat black.",
+    sy_locale:"Locale", sy_detected:"detected", sy_running:"running", sy_installed:"installed",
+    sy_lang_use:"Use: lang es | lang en",
+    sy_lang_set:"Locale set to ",
+    sy_nopack:" // LANGUAGE PACK NOT INSTALLED",
+    sy_nopack2:"Scheduled for a future build. Running in EN.",
+    sy_reboot:"Rebooting...", sy_reset:"SYSTEM RESET.",
+    sy_reset2:"All local progress erased. Rebooting...",
+    sy_nothing:"Nothing to close.", sy_nohistory:"No history yet.",
+    sy_hist:"Session history",
+    e_notfound:'Command not found: "{x}"',
+    e_didyou:"Did you mean: ", e_typehelp:"Type {help} for the list.",
+    e_usage_open:"Usage: open [slug]. Try {games}.",
+    e_nofile:'No such file: "{x}"'
+  },
+
+  es: {
+    boot_mem:"MEMORIA", boot_mem_v:"640K OK",
+    boot_video:"VÍDEO", boot_video_v:"MONOCROMO",
+    boot_audio:"AUDIO", boot_audio_v:"SINTETIZADO / OPCIONAL",
+    boot_locale:"IDIOMA", boot_detected:"DETECTADO",
+    boot_nopack:"PAQUETE NO INSTALADO · SE USARÁ EN",
+    boot_archive:"ARCHIVO", boot_archive_v:"MONTADO",
+    boot_class:"CLASIFICADO", boot_class_v:"BLOQUEADO",
+    boot_starting:"INICIANDO SISTEMA CREATIVO HOSTIL...",
+    boot_online:"SISTEMA EN LÍNEA.",
+    hint_fine:'Escribe <span class="cmd" data-cmd="help">help</span> para empezar — o cualquier comando que adivines.',
+    hint_coarse:"Toca la pantalla para empezar.",
+    banner_sub:"Sistema Creativo Hostil",
+    banner_hint:"Escribe {help} para empezar. No todos los comandos están en la lista.",
+
+    chip_help:"Ayuda", chip_games:"Juegos", chip_press:"Prensa",
+    chip_about:"Estudio", chip_contact:"Contacto",
+    bar_hint:"Tab autocompleta · ↑↓ historial · Esc cierra",
+    btn_sound_on:"Sonido sí", btn_sound_off:"Sonido no",
+    btn_close:"Cerrar · Esc", btn_exit:"Salir · Esc",
+    loading:"Cargando…",
+
+    d_help:"Lista los comandos disponibles.", d_about:"Quiénes somos.",
+    d_games:"Los juegos que hacemos.", d_open:"Abre un proyecto o archivo.",
+    d_play:"Ejecuta un programa.", d_archive:"Explora el archivo público.",
+    d_contact:"Cómo encontrarnos.", d_press:"Dossier de prensa y material.",
+    d_clippings:"Prensa y repercusión.", d_clear:"Limpia la pantalla.",
+    d_history:"Comandos usados en esta sesión.", d_back:"Cierra la vista actual.",
+    d_home:"Vuelve a la terminal.", d_sound:"Activa o desactiva el sonido.",
+    d_crt:"Activa o desactiva la textura de pantalla.", d_lang:"Idioma del sistema.",
+    d_restart:"Reinicia el sistema.",
+    h_title:"Comandos disponibles", h_foot:"No todo está en esta lista.",
+
+    ab_title:"Making Enemies",
+    ab_lead:"Un pequeño estudio creativo fundado por Ayose Trujillo.",
+    ab_1:"01 · Origen", ab_2:"02 · Presente", ab_3:"03 · Futuro",
+    ab_origin_a:"Empezó en 2020 en las game jams, construyendo juegos experimentales en cuarenta y ocho horas. Nunca había tiempo suficiente para darle demasiadas vueltas a nada. Solo el justo para terminar.",
+    ab_origin_b:"Esa forma de trabajar acabó convirtiéndose en algo más grande.",
+    ab_present_a:"En 2025 el estudio publicó su primer juego comercial, ",
+    ab_present_b:", editado por ",
+    ab_present_c:". El juego fue bien recibido tanto por jugadores como por la prensa, con una puntuación agregada de 82/100 según la recopilación de análisis de ",
+    ab_present_d:" en plataformas digitales.",
+    ab_present_e:"Hoy, Making Enemies crea videojuegos, ilustración, música y proyectos interactivos.",
+    ab_next:"El estudio trabaja actualmente en su próximo proyecto, la segunda entrega de la saga Scholar Adventure.",
+    ab_end_a:"Todo lo que hay aquí pertenece al mismo archivo.",
+    ab_end_b:"Algunos ficheros son fáciles de encontrar.",
+    ab_end_c:"Otros siguen escondidos.",
+    ab_core:"Nosotros dos", ab_collab:"Colaboradores",
+    ab_noimg:"Sin imagen", ab_noportrait:"Sin retrato en el archivo de ",
+    ab_foot_press:"Prensa y repercusión: ", ab_foot_credits:"   ·   Créditos: ",
+    ab_credits_link:"más amigos que enemigos",
+
+    g_title:"Juegos", g_mount:"&gt; montando /games/game-jams — {n} entradas",
+    g_foot:"Usa: open [slug] para ver una ficha · {more} para el archivo completo de jams.",
+    g_play:"jugar ↗",
+
+    ps_status:"Estado", ps_platforms:"Plataformas", ps_tags:"Etiquetas",
+    ps_nomedia:"SIN MEDIA EN EL ÍNDICE PÚBLICO",
+    ps_sealed:"Esta entrada no está autorizada para su publicación. Todo lo anterior se censura al renderizar.",
+    ps_nolinks:"Todavía no hay enlaces configurados para esta entrada.",
+    ps_hidden:"Esta entrada referencia un archivo que no está en el índice público: ",
+    ps_clip:"Escribe {cmd} para leer lo que dijo la prensa.",
+    ps_desktop:"Escritorio", ps_consoles:"Consolas", ps_mobile:"Móvil",
+
+    p_title:"Inserta moneda", p_online:"[EN LÍNEA]", p_corrupt:"[CORRUPTO]", p_locked:"[BLOQUEADO]",
+    p_foot:"Usa: play [programa] — o pulsa un número. Ejemplo: {ex}",
+    p_unknown:'Programa desconocido: "{x}"',
+    p_damaged:" — sector dañado.", p_damaged2:"La recuperación necesita una clave que este sistema aún no tiene.",
+    p_disabled:" — desactivado.", p_disabled2:"No disponible en esta versión.",
+    p_loading:"CARGANDO ",
+
+    pk_title:"Dossier de prensa",
+    pk_body:"Logotipos, arte, capturas, ficha técnica e información del estudio para prensa, creadores de contenido y organizadores de eventos.",
+    pk_studio:"estudio", pk_founded:"fundado", pk_founded_v:"2020 · game jams",
+    pk_based:"desde", pk_based_v:"España", pk_contact:"contacto",
+    pk_btn:"Descargar dossier ↓",
+
+    c_title:"Contacto", c_email:"correo", c_web:"web", c_links:"enlaces",
+    c_foot:"Mira {about} para saber quién responde a esa dirección.",
+
+    a_title:"Archivo · /archive",
+    a_press:"Dossier de prensa — ME-PressKit-web.zip",
+    a_itch:"juegos de jam en itch.io",
+    a_devlogs:"Notas de producción — vacío",
+    a_music:"Bandas sonoras de Antonio Vozmediano — vacío",
+    a_class:"Restringido. Se requiere autorización",
+    a_note:"Hay una nota clavada en la raíz de este directorio:",
+    a_question:"«¿Qué queda cuando desaparecen todas las voces?»",
+    a_hint:"Usa {cmd} si crees que lo sabes.",
+
+    cl_title:"Repercusión", cl_none:"Todavía no hay nada registrado.",
+    cl_reviews:"Análisis · prensa especializada", cl_interviews:"Entrevistas · programas",
+    cl_features:"Artículos · noticias · selecciones", cl_video:"Vídeo · gameplays · guías",
+    cl_index:"Agregadores · bases de datos",
+    cl_foot:"{n} entradas · origen: {src}",
+    cl_live:"índice en vivo", cl_cache:"copia local",
+
+    fr_title:"Más amigos que enemigos",
+    fr_sub:"Gente que ayudó, probó, discutió o simplemente apareció.",
+    fr_foot:"La lista sigue creciendo.",
+    mo_title:"Más juegos", mo_sub:"Ver más juegos en",
+    mo_foot:"Builds de jam, prototipos y cosas que nunca llegaron a tener nombre.",
+
+    st_title:"Estado del sistema", st_system:"sistema", st_build:"build", st_release:"versión",
+    st_sound:"sonido", st_secrets:"secretos", st_found:" encontrados",
+    st_on:"sí", st_off:"no", st_norecord:"sin registro", st_best:"mejor ",
+    st_foot:"{restart} reinicia. {reset} borra el progreso local.",
+    sy_sound_on:"Sonido activado.", sy_sound_off:"Sonido desactivado.",
+    sy_crt_on:"Textura de pantalla activada.", sy_crt_off:"Textura desactivada — negro plano.",
+    sy_locale:"Idioma", sy_detected:"detectado", sy_running:"en uso", sy_installed:"instalados",
+    sy_lang_use:"Usa: lang es | lang en",
+    sy_lang_set:"Idioma cambiado a ",
+    sy_nopack:" // PAQUETE DE IDIOMA NO INSTALADO",
+    sy_nopack2:"Previsto para una versión futura. Funcionando en EN.",
+    sy_reboot:"Reiniciando...", sy_reset:"SISTEMA REINICIADO.",
+    sy_reset2:"Progreso local borrado. Reiniciando...",
+    sy_nothing:"No hay nada que cerrar.", sy_nohistory:"Todavía no hay historial.",
+    sy_hist:"Historial de sesión",
+    e_notfound:'Comando no encontrado: "{x}"',
+    e_didyou:"¿Querías decir: ", e_typehelp:"Escribe {help} para ver la lista.",
+    e_usage_open:"Uso: open [slug]. Prueba {games}.",
+    e_nofile:'No existe el archivo: "{x}"'
+  }
+};
+
+const STATUS_ES = { released:"PUBLICADO", archive:"ARCHIVO", unannounced:"SIN ANUNCIAR", development:"EN DESARROLLO" };
+function statusLabel(p){
+  const s = p.status.toUpperCase();
+  return state.lang === "es" && STATUS_ES[p.status] ? STATUS_ES[p.status] : s;
+}
+
+function t(key, vars){
+  const dict = I18N[state.lang] || I18N.en;
+  let s = dict[key] !== undefined ? dict[key] : (I18N.en[key] !== undefined ? I18N.en[key] : key);
+  if(vars) Object.keys(vars).forEach(k => { s = s.split("{" + k + "}").join(vars[k]); });
+  return s;
+}
+/* localised field on a data object: p.es.tagline when running in Spanish */
+function L(obj, field){
+  const loc = obj[state.lang];
+  return (loc && loc[field]) || obj[field];
+}
+
 /* ============================================================
    COMMAND REGISTRY
    ============================================================ */
@@ -908,73 +1204,73 @@ function findCmd(name){
   return COMMANDS.find(c => c.name === name || (c.aliases||[]).includes(name));
 }
 
-defc({ name:"help", desc:"List available commands.", visible:true, run(){
-  print("Available commands", "head");
+defc({ name:"help", aliases:["ayuda"], get desc(){ return t("d_help"); }, visible:true, run(){
+  print(t("h_title"), "head");
   COMMANDS.filter(c => c.visible).forEach(c => {
     print(`<span class="grid2"><span>${cmdLink(c.usage || c.name, c.usage || c.name)}</span><span>${c.desc}</span></span>`);
   });
   print("");
-  print("Not everything is on this list.", "faint");
+  print(t("h_foot"), "faint");
 }});
 
-defc({ name:"about", aliases:["team","crew","whois","aboutus"], desc:"Who we are.", visible:true, run(){
-  print("Making Enemies", "head");
-  print("A small creative studio founded by Ayose Trujillo.", "dim");
+defc({ name:"about", aliases:["team","crew","whois","aboutus","estudio","nosotros","equipo"], get desc(){ return t("d_about"); }, visible:true, run(){
+  print(t("ab_title"), "head");
+  print(t("ab_lead"), "dim");
 
-  print("01 \u00b7 Origin", "sub");
+  print(t("ab_1"), "sub");
   printLines([
-    "It began in 2020 during game jams, building experimental games in forty-eight hours. There was never enough time to overthink anything. Only enough time to finish.",
+    t("ab_origin_a"),
     "",
-    "That way of working slowly became something bigger."
+    t("ab_origin_b")
   ], "dim");
 
-  print("02 \u00b7 Present", "sub");
-  print("In 2025, the studio released its first commercial game, "
-    + cmdLink("open mystery-of-silence", "Scholar Adventure: Mystery of Silence") + ", published by "
+  print(t("ab_2"), "sub");
+  print(t("ab_present_a")
+    + cmdLink("open mystery-of-silence", "Scholar Adventure: Mystery of Silence") + t("ab_present_b")
     + extLink("https://www.devilishgames.com", "DevilishGames")
-    + ". The game was warmly received by both players and the press, earning an aggregate score of 82/100, according to "
+    + t("ab_present_c")
     + extLink("https://www.devuego.es/fjuego/scholar-adventure-mystery-of-silence", "DeVuego")
-    + "\u2019s compilation of reviews across digital platforms.", "dim");
+    + t("ab_present_d"), "dim");
   print("");
-  print("Today, Making Enemies creates videogames, illustrations, music and interactive projects.", "dim");
+  print(t("ab_present_e"), "dim");
 
-  print("03 \u00b7 Next", "sub");
-  print("The studio is currently working on its next project, the second installment of the Scholar Adventure series.", "dim");
+  print(t("ab_3"), "sub");
+  print(t("ab_next"), "dim");
   print("");
   printLines([
-    "Everything here belongs to the same archive.",
+    t("ab_end_a"),
     "",
-    "Some files are easy to find.",
+    t("ab_end_b"),
     "",
-    "Others are still hidden."
+    t("ab_end_c")
   ], "dim");
 
   const card = (m) => `
     <span class="person">
       ${m.img
         ? `<span class="face"><img src="${m.img}" alt="${m.name}"></span>`
-        : `<span class="face blank" role="img" aria-label="No portrait on file for ${m.name}">
+        : `<span class="face blank" role="img" aria-label="${t("ab_noportrait")}${m.name}">
              <span class="init">${initials(m.name)}</span>
-             <span class="lbl">No image</span>
+             <span class="lbl">${t("ab_noimg")}</span>
            </span>`}
       <span class="who">
         <span class="n">${m.name}</span>
-        ${m.role ? `<span class="r">${m.role}</span>` : ""}
+        ${m.role ? `<span class="r">${L(m, "role")}</span>` : ""}
         ${m.handle ? `<span class="hd">${m.handle}</span>` : ""}
       </span>
     </span>`;
 
-  print("The two of us", "sub");
+  print(t("ab_core"), "sub");
   print(`<span class="people">${CORE.map(card).join("")}</span>`);
-  print("Collaborators", "sub");
+  print(t("ab_collab"), "sub");
   print(`<span class="people narrow">${SUSPECTS.map(card).join("")}</span>`);
   print("");
-  print("Press and coverage: " + cmdLink("clippings")
-      + "   ·   Credits: " + cmdLink("friends", "more friends than enemies"), "faint");
+  print(t("ab_foot_press") + cmdLink("clippings")
+      + t("ab_foot_credits") + cmdLink("friends", t("ab_credits_link")), "faint");
 }});
 
-defc({ name:"games", aliases:["projects","ls","dir"], desc:"Games we make.", visible:true, run(){
-  print("Games", "head");
+defc({ name:"games", aliases:["projects","ls","dir","juegos"], get desc(){ return t("d_games"); }, visible:true, run(){
+  print(t("g_title"), "head");
   const list = PROJECTS.filter(p => !p.sealed || state.secrets.seal2);
   const groups = [];
   list.forEach(p => {
@@ -989,9 +1285,9 @@ defc({ name:"games", aliases:["projects","ls","dir"], desc:"Games we make.", vis
     // a secondary group announces itself as a subfolder being mounted
     if(compact.length){
       print("");
-      print("&gt; mount /games/game-jams \u2014 " + compact.length + " entries", "faint");
+      print(t("g_mount", { n: compact.length }), "faint");
     }
-    print(g.name, "sub");
+    print(state.lang === "es" && GROUPS_ES[g.name] ? GROUPS_ES[g.name] : g.name, "sub");
 
     full.forEach(p => {
       if(p.thumb){
@@ -999,12 +1295,12 @@ defc({ name:"games", aliases:["projects","ls","dir"], desc:"Games we make.", vis
             <span class="thumb"><img src="${p.thumb}" alt=""></span>
             <span class="meta">
               <span class="t">${cmdLink("open " + p.slug, p.title)}</span>
-              <span class="s">${p.status.toUpperCase()}${p.year ? " \u00b7 " + p.year : ""} \u00b7 ${p.platforms.join(" \u00b7 ")}</span>
-              <span class="d">${p.tagline}</span>
+              <span class="s">${statusLabel(p)}${p.year ? " · " + p.year : ""} \u00b7 ${p.platforms.join(" \u00b7 ")}</span>
+              <span class="d">${L(p, "tagline")}</span>
             </span>
           </span>`);
       }else{
-        print(`<span class="grid2"><span>${cmdLink("open " + p.slug, p.slug)}</span><span>${p.title} \u00b7 ${p.status.toUpperCase()}</span></span>`);
+        print(`<span class="grid2"><span>${cmdLink("open " + p.slug, p.slug)}</span><span>${p.title} · ${statusLabel(p)}</span></span>`);
       }
     });
 
@@ -1014,17 +1310,17 @@ defc({ name:"games", aliases:["projects","ls","dir"], desc:"Games we make.", vis
           <span class="jt"><img src="${p.thumb}" alt=""></span>
           <span class="jn">${cmdLink("open " + p.slug, p.title)}</span>
           <span class="jy">${p.year}</span>
-          <a class="jp" href="${p.playUrl}" target="_blank" rel="noopener">play \u2197</a>
+          <a class="jp" href="${p.playUrl}" target="_blank" rel="noopener">${t("g_play")}</a>
         </span>`).join("")}</span>`);
     }
     print("");
   });
-  print("Use: open [slug] to see an entry \u00b7 " + cmdLink("more") + " for the full jam archive.", "faint");
+  print(t("g_foot", { more: cmdLink("more") }), "faint");
 }});
 
-defc({ name:"open", usage:"open [slug]", desc:"Open a project or file.", visible:true, run(args){
+defc({ name:"open", usage:"open [slug]", get desc(){ return t("d_open"); }, visible:true, run(args){
   const slug = (args[0] || "").toLowerCase();
-  if(!slug){ print("Usage: open [slug]. Try " + cmdLink("games") + ".", "err"); SFX.err(); return; }
+  if(!slug){ print(t("e_usage_open", { games: cmdLink("games") }), "err"); SFX.err(); return; }
 
   if(slug === "classified" || slug === "/classified"){ return findCmd("classified").run([]); }
   if(slug === "silence.log" || slug === "silence"){ return findCmd("silence").run([]); }
@@ -1032,96 +1328,96 @@ defc({ name:"open", usage:"open [slug]", desc:"Open a project or file.", visible
   const pool = PROJECTS.filter(x => !x.sealed || state.secrets.seal2);
   let p = pool.find(x => x.slug === slug);
   if(!p) p = pool.find(x => x.slug.includes(slug) || x.title.toLowerCase().includes(slug));
-  if(!p){ print(`No such file: "${slug}"`, "err"); SFX.err(); return; }
+  if(!p){ print(t("e_nofile", { x: slug }), "err"); SFX.err(); return; }
 
   print(`Opening: ${p.slug}...`, "dim");
   openProject(p);
 }});
 
-defc({ name:"play", aliases:["insertcoin"], usage:"play [program]", desc:"Run a program.", visible:true, run(args){
+defc({ name:"play", aliases:["insertcoin","jugar"], usage:"play [program]", get desc(){ return t("d_play"); }, visible:true, run(args){
   const id = (args[0] || "").toLowerCase();
   if(!id){
-    print("Insert coin", "head");
+    print(t("p_title"), "head");
     GAMES.forEach((g, i) => {
       const locked = g.status !== "online";
       const label = locked ? g.title : cmdLink("play " + g.id, g.title);
-      const tag = g.status === "online" ? "[ONLINE]" : g.status === "corrupted" ? "[CORRUPTED]" : "[LOCKED]";
+      const tag = g.status === "online" ? t("p_online") : g.status === "corrupted" ? t("p_corrupt") : t("p_locked");
       print(`<span class="grid2"><span>${String(i+1).padStart(2,"0")} ${label}</span><span>${tag} ${g.desc}</span></span>`);
     });
     print("");
-    print("Use: play [program] — example: " + cmdLink("play snake"), "faint");
+    print(t("p_foot", { ex: cmdLink("play snake") }), "faint");
     return;
   }
   const g = GAMES.find(x => x.id === id);
-  if(!g){ print(`Unknown program: "${id}"`, "err"); SFX.err(); return; }
+  if(!g){ print(t("p_unknown", { x: id }), "err"); SFX.err(); return; }
   if(g.status !== "online"){
     if(g.status === "corrupted"){
-      print(`/programs/${g.id}.exe — sector damaged.`, "err");
-      print("Recovery requires a key this system does not have yet.", "dim");
+      print("/programs/" + g.id + ".exe" + t("p_damaged"), "err");
+      print(t("p_damaged2"), "dim");
     }else{
-      print(`/programs/${g.id}.exe — disabled.`, "err");
-      print("Not available in this build.", "dim");
+      print("/programs/" + g.id + ".exe" + t("p_disabled"), "err");
+      print(t("p_disabled2"), "dim");
     }
     SFX.err(); glitch(1.4);
     return;
   }
-  print(`LOADING /programs/${g.id}.exe...`, "dim");
+  print(t("p_loading") + "/programs/" + g.id + ".exe...", "dim");
   setTimeout(() => launchGame(g.id), 260);
 }});
 
-defc({ name:"archive", desc:"Browse public archive.", visible:true, run(){
-  print("Archive · /archive", "head");
+defc({ name:"archive", aliases:["archivo"], get desc(){ return t("d_archive"); }, visible:true, run(){
+  print(t("a_title"), "head");
   table([
-    ["press/", cmdLink("presskit", "press kit") + " — ME-PressKit-web.zip"],
-    ["itch/", `<a class="cmd" href="https://makingenemies.itch.io/" target="_blank" rel="noopener">jam games on itch.io</a>`],
-    ["devlogs/", "Production notes — empty"],
-    ["music/", "Soundtracks by Antonio Vozmediano — empty"],
-    ["classified/", "Restricted. Authorisation required"]
+    ["press/", cmdLink("presskit", t("a_press"))],
+    ["itch/", `<a class="cmd" href="https://makingenemies.itch.io/" target="_blank" rel="noopener">${t("a_itch")}</a>`],
+    ["devlogs/", t("a_devlogs")],
+    ["music/", t("a_music")],
+    ["classified/", t("a_class")]
   ]);
   print("");
-  print("A note is pinned to the root of this directory:", "dim");
+  print(t("a_note"), "dim");
   print("");
-  print("&nbsp;&nbsp;“What remains when every voice disappears?”", "");
+  print("&nbsp;&nbsp;" + t("a_question"), "");
   print("");
-  print("Use " + cmdLink("open classified") + " if you think you know.", "faint");
+  print(t("a_hint", { cmd: cmdLink("open classified") }), "faint");
 }});
 
-defc({ name:"contact", desc:"How to reach us.", visible:true, run(){
-  print("Contact", "head");
+defc({ name:"contact", aliases:["contacto"], get desc(){ return t("d_contact"); }, visible:true, run(){
+  print(t("c_title"), "head");
   const e = CONFIG.contact.email;
   const link = (l) => `<a class="cmd" href="${l.url}" target="_blank" rel="noopener">${l.label}</a>`;
   table([
-    ["email", `<a class="cmd" href="mailto:${e}">${e}</a>`],
-    ["web", CONFIG.domain],
-    ["links", CONFIG.contact.links.map(link).join("  ·  ")]
+    [t("c_email"), `<a class="cmd" href="mailto:${e}">${e}</a>`],
+    [t("c_web"), CONFIG.domain],
+    [t("c_links"), CONFIG.contact.links.map(link).join("  ·  ")]
   ]);
   print("");
-  print("See " + cmdLink("about") + " for who answers that address.", "faint");
+  print(t("c_foot", { about: cmdLink("about") }), "faint");
 }});
 
-defc({ name:"more", aliases:["itch","allgames"], desc:"", visible:false, run(){
-  print("More games", "head");
-  print("Ver m\u00e1s juegos en \u00b7 more games at", "dim");
+defc({ name:"more", aliases:["itch","allgames","mas"], desc:"", visible:false, run(){
+  print(t("mo_title"), "head");
+  print(t("mo_sub"), "dim");
   print("");
   [
     "https://makingenemies.itch.io/",
     "https://ayo-makingenemies.itch.io/"
   ].forEach(u => print(`<a class="cmd ext" href="${u}" target="_blank" rel="noopener">${u}</a>`));
   print("");
-  print("Jam builds, prototypes and things that never got a name.", "faint");
+  print(t("mo_foot"), "faint");
   SFX.open();
 }});
 
-defc({ name:"friends", aliases:["credits","morefriends"], desc:"", visible:false, run(){
-  print("More Friends Than Enemies", "head");
-  print("People who helped, tested, argued, or simply showed up.", "dim");
+defc({ name:"friends", aliases:["credits","morefriends","amigos"], desc:"", visible:false, run(){
+  print(t("fr_title"), "head");
+  print(t("fr_sub"), "dim");
   print("");
   FRIENDS.forEach(n => print(n));
   print("");
-  print("The list keeps growing.", "faint");
+  print(t("fr_foot"), "faint");
 }});
 
-defc({ name:"clippings", aliases:["clipping","press-coverage","reviews"], usage:"clippings", desc:"Press and coverage.", visible:true, run(args){
+defc({ name:"clippings", aliases:["clipping","press-coverage","reviews","repercusion","prensa-digital"], usage:"clippings", get desc(){ return t("d_clippings"); }, visible:true, run(args){
   // inside a project, `clipping` narrows to that game automatically
   let filter = (args[0] || "").toLowerCase();
   if(!filter && state.lastProject) filter = state.lastProject;
@@ -1133,16 +1429,16 @@ defc({ name:"clippings", aliases:["clipping","press-coverage","reviews"], usage:
   }
 
   const proj = PROJECTS.find(p => p.slug === filter);
-  print(proj ? "Clippings \u00b7 " + proj.title : "Clippings", "head");
+  print(proj ? t("cl_title") + " · " + proj.title : t("cl_title"), "head");
 
-  if(!list.length){ print("Nothing recorded yet.", "dim"); return; }
+  if(!list.length){ print(t("cl_none"), "dim"); return; }
 
   const groups = [
-    { key:"review",    label:"Reviews \u00b7 specialised press" },
-    { key:"interview", label:"Interviews \u00b7 shows" },
-    { key:"feature",   label:"Features \u00b7 news \u00b7 selections" },
-    { key:"video",     label:"Video \u00b7 gameplays \u00b7 walkthroughs" },
-    { key:"index",     label:"Aggregators \u00b7 databases" }
+    { key:"review",    get label(){ return t("cl_reviews"); } },
+    { key:"interview", get label(){ return t("cl_interviews"); } },
+    { key:"feature",   get label(){ return t("cl_features"); } },
+    { key:"video",     get label(){ return t("cl_video"); } },
+    { key:"index",     get label(){ return t("cl_index"); } }
   ];
   state.lastList = [];
   groups.forEach(g => {
@@ -1157,24 +1453,24 @@ defc({ name:"clippings", aliases:["clipping","press-coverage","reviews"], usage:
     });
     print("");
   });
-  print(list.length + " entries \u00b7 source: " + (state.clipSource === "external" ? "live index" : "local cache"), "faint");
+  print(t("cl_foot", { n: list.length, src: state.clipSource === "external" ? t("cl_live") : t("cl_cache") }), "faint");
 }});
 
-defc({ name:"presskit", aliases:["press"], desc:"Press kit and media material.", visible:true, run(){
-  print("Press Kit", "head");
+defc({ name:"presskit", aliases:["press","prensa","dossier"], get desc(){ return t("d_press"); }, visible:true, run(){
+  print(t("pk_title"), "head");
   printLines([
-    "Logos, key art, screenshots, fact sheet and studio information for press, content creators and event organisers."
+    t("pk_body")
   ], "dim");
   print("");
   table([
-    ["studio", CONFIG.name],
-    ["founded", "2020 · game jams"],
-    ["based in", "Spain"],
-    ["contact", `<a class="cmd" href="mailto:${CONFIG.contact.email}">${CONFIG.contact.email}</a>`]
+    [t("pk_studio"), CONFIG.name],
+    [t("pk_founded"), t("pk_founded_v")],
+    [t("pk_based"), t("pk_based_v")],
+    [t("pk_contact"), `<a class="cmd" href="mailto:${CONFIG.contact.email}">${CONFIG.contact.email}</a>`]
   ]);
   print("");
   const kit = CONFIG.contact.links.find(l => l.label === "Press kit");
-  print(`<a class="bigbtn" href="${kit.url}" download>Download press kit ↓</a>`);
+  print(`<a class="bigbtn" href="${kit.url}" download>${t("pk_btn")}</a>`);
   print("");
   print("ME-PressKit-web.zip · makingenemies.es", "faint");
 }});
@@ -1186,52 +1482,52 @@ defc({ name:"steam", desc:"", visible:false, run(){
   SFX.open();
 }});
 
-defc({ name:"clear", aliases:["cls"], desc:"Clear the screen.", visible:true, run(){ clearOut(); }});
+defc({ name:"clear", aliases:["cls","limpiar"], get desc(){ return t("d_clear"); }, visible:true, run(){ clearOut(); }});
 
-defc({ name:"history", desc:"Show commands used this session.", visible:true, run(){
-  if(!state.history.length){ print("No history yet.", "dim"); return; }
-  print("Session history", "head");
+defc({ name:"history", aliases:["historial"], get desc(){ return t("d_history"); }, visible:true, run(){
+  if(!state.history.length){ print(t("sy_nohistory"), "dim"); return; }
+  print(t("sy_hist"), "head");
   state.history.slice().reverse().forEach((h, i) => print(String(i+1).padStart(3,"0") + "  " + h, "dim"));
 }});
 
-defc({ name:"back", aliases:["exit"], desc:"Close the current view.", visible:true, run(){
-  if(state.view) closeView(); else print("Nothing to close.", "dim");
+defc({ name:"back", aliases:["exit","atras"], get desc(){ return t("d_back"); }, visible:true, run(){
+  if(state.view) closeView(); else print(t("sy_nothing"), "dim");
 }});
 
-defc({ name:"home", desc:"Return to the terminal.", visible:true, run(){
+defc({ name:"home", aliases:["inicio"], get desc(){ return t("d_home"); }, visible:true, run(){
   closeView(); clearOut(); banner();
 }});
 
-defc({ name:"lang", aliases:["locale","language"], usage:"lang es|en", desc:"System language.", visible:true, run(args){
+defc({ name:"lang", aliases:["locale","language","idioma"], usage:"lang es|en", get desc(){ return t("d_lang"); }, visible:true, run(args){
   const v = (args[0] || "").toLowerCase();
   if(!v){
-    print("Locale", "head");
+    print(t("sy_locale"), "head");
     table([
-      ["detected", LANGS[DETECTED].tag],
-      ["running",  LANGS[state.lang].tag + " \u00b7 " + LANGS[state.lang].label],
-      ["installed", Object.values(LANGS).filter(l => l.available).map(l => l.tag).join(", ")]
+      [t("sy_detected"), LANGS[DETECTED].tag],
+      [t("sy_running"),  LANGS[state.lang].tag + " · " + LANGS[state.lang].label],
+      [t("sy_installed"), Object.values(LANGS).filter(l => l.available).map(l => l.tag).join(", ")]
     ]);
     print("");
-    print("Use: lang es | lang en", "faint");
+    print(t("sy_lang_use"), "faint");
     return;
   }
   if(!LANGS[v]){ print(`Unknown locale: "${v}"`, "err"); SFX.err(); return; }
-  if(setLang(v)) print("Locale set to " + LANGS[v].tag + ".", "dim");
+  if(setLang(v)) print(t("sy_lang_set") + LANGS[v].tag + ".", "dim");
 }});
 
-defc({ name:"crt", usage:"crt on|off", desc:"Toggle screen texture.", visible:true, run(args){
+defc({ name:"crt", usage:"crt on|off", get desc(){ return t("d_crt"); }, visible:true, run(args){
   const v = (args[0] || "").toLowerCase();
   state.crt = (v === "on" || v === "off") ? (v === "on") : !state.crt;
   document.body.dataset.crt = state.crt ? "on" : "off";
-  print("Screen texture " + (state.crt ? "enabled." : "disabled \u2014 flat black."), "dim");
+  print(state.crt ? t("sy_crt_on") : t("sy_crt_off"), "dim");
   SFX.open();
 }});
 
-defc({ name:"sound", usage:"sound on|off", desc:"Toggle system sound.", visible:true, run(args){
+defc({ name:"sound", aliases:["sonido"], usage:"sound on|off", get desc(){ return t("d_sound"); }, visible:true, run(args){
   const v = (args[0] || "").toLowerCase();
   if(v === "on" || v === "off"){ setSound(v === "on"); }
   else setSound(!state.sound);
-  print("Sound " + (state.sound ? "enabled." : "disabled."), "dim");
+  print(state.sound ? t("sy_sound_on") : t("sy_sound_off"), "dim");
 }});
 
 /* ---------- SECRET COMMANDS ---------- */
@@ -1350,32 +1646,32 @@ defc({ name:"sudo", desc:"", visible:false, run(){
 }});
 
 defc({ name:"status", desc:"", visible:false, run(){
-  print("System status", "head");
+  print(t("st_title"), "head");
   const n = Object.keys(state.secrets).length;
   table([
-    ["system", CONFIG.systemName + " v" + CONFIG.version],
-    ["build", CONFIG.build],
-    ["release", CONFIG.release],
-    ["sound", state.sound ? "on" : "off"],
-    ["secrets", n + " / " + SECRET_TOTAL + " found"],
-    ["pong", state.scores.pong != null ? "best win " + state.scores.pong : "no record"],
-    ["snake", state.scores.snake != null ? "best score " + state.scores.snake : "no record"]
+    [t("st_system"), CONFIG.systemName + " v" + CONFIG.version],
+    [t("st_build"), CONFIG.build],
+    [t("st_release"), CONFIG.release],
+    [t("st_sound"), state.sound ? t("st_on") : t("st_off")],
+    [t("st_secrets"), n + " / " + SECRET_TOTAL + t("st_found")],
+    ["pong", state.scores.pong != null ? t("st_best") + state.scores.pong : t("st_norecord")],
+    ["snake", state.scores.snake != null ? t("st_best") + state.scores.snake : t("st_norecord")]
   ]);
   print("");
-  print(cmdLink("restart") + " reboots. " + cmdLink("reset system") + " wipes local progress.", "faint");
+  print(t("st_foot", { restart: cmdLink("restart"), reset: cmdLink("reset system") }), "faint");
 }});
 
-defc({ name:"restart", aliases:["reboot","homepage","reset"], usage:"restart", desc:"Reboot the system.", visible:true, run(args){
+defc({ name:"restart", aliases:["reboot","homepage","reset","reiniciar"], usage:"restart", get desc(){ return t("d_restart"); }, visible:true, run(args){
   if((args[0] || "").toLowerCase() === "system"){
     state.secrets = {}; state.scores = {}; state.history = [];
     document.body.dataset.crt = state.crt ? "on" : "off";
 updateSecretCount(); glitch(2);
-    print("SYSTEM RESET.", "inv");
-    print("All local progress erased. Rebooting...", "dim");
+    print(t("sy_reset"), "inv");
+    print(t("sy_reset2"), "dim");
     setTimeout(reboot, 900);
     return;
   }
-  print("Rebooting...", "dim");
+  print(t("sy_reboot"), "dim");
   beep(140, .16, "sawtooth", .05);
   setTimeout(reboot, 420);
 }});
@@ -1493,19 +1789,19 @@ function execute(raw){
   if(c){
     SFX.enter();
     // entering a section gets the same glitch cut as opening a project
-    if(SECTIONS.has(c.name)){ glitch(1); SFX.open(); }
+    if(SECTIONS.has(c.name)){ glitch(1); SFX.open(); state.lastSection = c.name; }
     return c.run(args);
   }
 
   SFX.err();
-  print(`Command not found: "${name}"`, "err");
+  print(t("e_notfound", { x: name }), "err");
   const cands = COMMANDS.filter(x => x.visible || ["open","play"].includes(x.name));
   let best = null, bd = 99;
   cands.forEach(x => { const d = lev(name, x.name); if(d < bd){ bd = d; best = x; } });
   if(best && bd <= 2){
-    print("Did you mean: " + cmdLink(best.usage || best.name) + " ?", "dim");
+    print(t("e_didyou") + cmdLink(best.usage || best.name) + " ?", "dim");
   }else{
-    print("Type " + cmdLink("help") + " for the list.", "dim");
+    print(t("e_typehelp", { help: cmdLink("help") }), "dim");
   }
 }
 
@@ -1626,7 +1922,7 @@ document.addEventListener("keydown", e => {
 /* ---------- SOUND TOGGLE ---------- */
 function setSound(on){
   state.sound = on;
-  $("#soundBtn").textContent = "Sound " + (on ? "on" : "off");
+  $("#soundBtn").textContent = on ? t("btn_sound_on") : t("btn_sound_off");
   if(on) beep(880, .04);
 }
 $("#soundBtn").addEventListener("click", () => { setSound(!state.sound); input.focus(); });
@@ -1670,34 +1966,34 @@ function openProject(p, keepStack){
 
   winBody.innerHTML = `
     <h2>${p.title}</h2>
-    <div class="tag">${p.tagline}</div>
+    <div class="tag">${L(p, "tagline")}</div>
 
     ${p.media
       ? `<div class="shot ph"><img src="${p.media}" alt="${p.title}"></div>`
-      : `<div class="plate">NO MEDIA IN PUBLIC INDEX</div>`}
+      : `<div class="plate">${t("ps_nomedia")}</div>`}
 
-    <p>${p.summary}</p>
+    <p>${L(p, "summary")}</p>
 
     ${mediaList.length ? `<div class="media-list">${mediaList.map((m, i) =>
       `<button data-media="${i}"><span class="k">&gt;</span> ${m.key}</button>`).join("")}</div>` : ""}
     ${p.sealed
-      ? `<p class="note">This entry is not cleared for release. Everything above is redacted at render time.</p>` : ""}
+      ? `<p class="note">${t("ps_sealed")}</p>` : ""}
 
-    <div class="row"><span>Status</span><span>${p.status.toUpperCase()}${p.year ? " \u00b7 " + p.year : ""}</span></div>
+    <div class="row"><span>${t("ps_status")}</span><span>${statusLabel(p)}${p.year ? " · " + p.year : ""}</span></div>
     ${p.platformGroups
       ? p.platformGroups.map(g =>
-          `<div class="row"><span>${g.label}</span><span>${g.items.map(i => i.name).join(" \u00b7 ")}</span></div>`).join("")
-      : `<div class="row"><span>Platforms</span><span>${p.platforms.join(" \u00b7 ")}</span></div>`}
-    <div class="row"><span>Tags</span><span>${p.tags.join(" \u00b7 ")}</span></div>
+          `<div class="row"><span>${t("ps_" + g.label.toLowerCase())}</span><span>${g.items.map(i => i.name).join(" \u00b7 ")}</span></div>`).join("")
+      : `<div class="row"><span>${t("ps_platforms")}</span><span>${p.platforms.join(" \u00b7 ")}</span></div>`}
+    <div class="row"><span>${t("ps_tags")}</span><span>${p.tags.join(" \u00b7 ")}</span></div>
 
     ${stores.length
       ? `<div class="links">${stores.map(l => `<a href="${l.url}" target="_blank" rel="noopener">${l.label} \u2197</a>`).join("")}
          ${pending.length ? `<span class="soonbtn">${pending.join(" \u00b7 ")} soon</span>` : ""}</div>`
-      : `<p class="note">No links configured yet for this entry.</p>`}
+      : `<p class="note">${t("ps_nolinks")}</p>`}
 
-    ${p.hidden ? `<p class="note">This entry references a file that is not in the public index: <b>${p.hidden}</b></p>` : ""}
+    ${p.hidden ? `<p class="note">${t("ps_hidden")}<b>${p.hidden}</b></p>` : ""}
     ${state.clippings.some(c => c.game === p.slug)
-      ? `<p class="note">Type <span class="cmd" data-cmd="clippings ${p.slug}" role="button" tabindex="0">clipping</span> to read what the press said.</p>` : ""}
+      ? `<p class="note">${t("ps_clip", { cmd: `<span class="cmd" data-cmd="clippings ${p.slug}" role="button" tabindex="0">clipping</span>` })}</p>` : ""}
   `;
   win.hidden = false;
   glitch(.9); SFX.open();
@@ -1755,7 +2051,7 @@ function renderMedia(){
   }
 
   viewerStage.innerHTML = `<div class="frame">
-      <span class="loadmsg">Loading…</span>
+      <span class="loadmsg">${t("loading")}</span>
       <img src="${item.src}" alt="${item.cap || item.key}">
     </div>`;
   const f = viewerStage.querySelector(".frame");
@@ -2124,33 +2420,30 @@ function Snake(){
    ============================================================ */
 function localeBootLines(){
   const l = LANGS[DETECTED];
-  if(l.available) return ["LOCALE ............... " + l.tag + " DETECTED"];
-  return [
-    "LOCALE ............... " + l.tag + " DETECTED",
-    "                      PACK NOT INSTALLED \u00b7 FALLBACK EN"
-  ];
+  const line = pad(t("boot_locale"), l.tag + " " + t("boot_detected"));
+  return l.available ? [line] : [line, "                      " + t("boot_nopack")];
 }
 
-const BOOT = [
+function BOOTLINES(){ return [
   "MAKING ENEMIES OPERATING SYSTEM " + CONFIG.release + " " + CONFIG.channel,
   "© 2026 MAKING ENEMIES",
   "",
-  "MEM CHECK ............ 640K OK",
-  "VIDEO ................ MONOCHROME",
-  "AUDIO ................ SYNTH / OPTIONAL",
+  pad(t("boot_mem"), t("boot_mem_v")),
+  pad(t("boot_video"), t("boot_video_v")),
+  pad(t("boot_audio"), t("boot_audio_v")),
   ...localeBootLines(),
-  "ARCHIVE .............. MOUNTED",
-  "CLASSIFIED ........... LOCKED",
+  pad(t("boot_archive"), t("boot_archive_v")),
+  pad(t("boot_class"), t("boot_class_v")),
   "",
-  "BOOTING HOSTILE CREATIVE SYSTEM...",
-  "SYSTEM ONLINE."
-];
+  t("boot_starting"),
+  t("boot_online")
+]; }
 
 function banner(){
   print("MAKING ENEMIES", "big");
-  print("Hostile Creative System · " + CONFIG.release, "faint");
+  print(t("banner_sub") + " · " + CONFIG.release, "faint");
   print("");
-  print('Type ' + cmdLink("help") + ' to begin. Some commands are not on the list.', "dim");
+  print(t("banner_hint", { help: cmdLink("help") }), "dim");
   print("");
 }
 
@@ -2158,7 +2451,7 @@ function banner(){
 function bootIdle(){
   if(state.bootIdle || state.booted) return;
   state.bootIdle = true;
-  $("#bootLines").textContent = BOOT.join("\n") + "\n";
+  $("#bootLines").textContent = BOOTLINES().join("\n") + "\n";
   $("#bootHint").hidden = false;
   if(!coarse){
     $("#boot").insertBefore(promptWrap, $("#bootHint").nextSibling);
@@ -2199,12 +2492,13 @@ function reboot(){
 
 function runBoot(){
   const el = $("#bootLines");
+  const B = BOOTLINES();
   let i = 0;
   const tick = () => {
     if(state.booted || state.bootIdle) return;
-    if(i >= BOOT.length){ setTimeout(bootIdle, 240); return; }
-    el.textContent += BOOT[i] + "\n";
-    if(BOOT[i]) beep(1400, .008, "square", .015);
+    if(i >= B.length){ setTimeout(bootIdle, 240); return; }
+    el.textContent += B[i] + "\n";
+    if(B[i]) beep(1400, .008, "square", .015);
     i++;
     setTimeout(tick, reduced ? 20 : 78);
   };
@@ -2212,20 +2506,42 @@ function runBoot(){
 }
 
 
+function paintChrome(){
+  $("#bootHint").innerHTML = coarse ? t("hint_coarse") : t("hint_fine");
+  $("#winClose").textContent = t("btn_close");
+  $("#viewerClose").textContent = t("btn_close");
+  $("#gameExit").textContent = t("btn_exit");
+  document.querySelector("#chips .hint").textContent = t("bar_hint");
+  $("#soundBtn").textContent = state.sound ? t("btn_sound_on") : t("btn_sound_off");
+  [["help","chip_help"],["games","chip_games"],["presskit","chip_press"],
+   ["about","chip_about"],["contact","chip_contact"]].forEach(([cmd, key]) => {
+    const b = document.querySelector(`#chips button[data-cmd="${cmd}"]`);
+    if(b) b.textContent = t(key);
+  });
+}
+
 function setLang(code){
   const l = LANGS[code];
   if(!l){ return false; }
   if(!l.available){
     SFX.err(); glitch(1.3);
     if(state.booted){
-      print(l.tag + " // LANGUAGE PACK NOT INSTALLED", "err");
-      print("Scheduled for a future build. Running in EN.", "dim");
+      print(l.tag + t("sy_nopack"), "err");
+      print(t("sy_nopack2"), "dim");
     }
     return false;
   }
   state.lang = code;
   document.documentElement.lang = code;
   $("#langBtn").textContent = "Lang " + code.toUpperCase();
+  paintChrome();
+  // redraw whatever is on screen in the new language
+  if(state.view === "window" && state.currentProject){
+    const p = state.currentProject; openProject(p, true);
+  }else if(state.booted && state.lastSection){
+    const s = state.lastSection;
+    setTimeout(() => { clearOut(); findCmd(s).run([]); }, 0);
+  }
   return true;
 }
 $("#langBtn").addEventListener("click", () => {
@@ -2260,6 +2576,7 @@ document.head.appendChild(fav);
 
 document.body.dataset.crt = state.crt ? "on" : "off";
 document.getElementById("buildTag").textContent = CONFIG.release;
+paintChrome();
 document.getElementById("langBtn").textContent = "Lang " + state.lang.toUpperCase();
 document.documentElement.lang = state.lang;
 loadClippings();
