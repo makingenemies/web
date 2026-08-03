@@ -412,6 +412,62 @@ body[data-crt="off"] #vignette{display:none !important}
   #bootHint .coarse{display:inline}
 }
 
+/* ---------- HIDEO ----------
+   The only green in the whole system. It is not ours: it is a signal from
+   another machine bleeding into ours, so it breaks the monochrome on purpose. */
+#hideo{
+  position:fixed; inset:0; z-index:90; background:#000;
+  overflow:hidden; pointer-events:none;
+}
+#hideo[hidden]{display:none}
+#hideo.out{animation:hideoOut .45s steps(3) both}
+@keyframes hideoOut{
+  0%{opacity:1} 40%{opacity:.35; transform:scaleY(1.02)}
+  70%{opacity:.9} 100%{opacity:0; transform:scaleY(.004)}
+}
+#hideoWord{
+  position:absolute; top:6.5%; right:14%;
+  width:clamp(170px, 30vw, 420px);
+  animation:hideoIn .5s steps(4) both, hideoShift 2.4s steps(2) infinite .5s;
+}
+@media(max-width:700px){ #hideoWord{ width:66vw; right:8%; } }
+#hideoSvg{
+  display:block; width:100%; height:auto;
+  fill:#f2f4f2;                       /* VCR white, a touch cool */
+  filter:drop-shadow(0 0 3px rgba(255,255,255,.55))
+         drop-shadow(0 0 14px rgba(255,255,255,.22));
+}
+@keyframes hideoIn{
+  0%{opacity:0; transform:translateX(28px) scaleX(1.4)}
+  40%{opacity:1; transform:translateX(-14px) scaleX(.9)}
+  70%{opacity:.4; transform:translateX(6px)}
+  100%{opacity:1; transform:none}
+}
+@keyframes hideoShift{
+  0%,72%{clip-path:inset(0 0 0 0); transform:none}
+  76%{clip-path:inset(18% 0 54% 0); transform:translateX(-22px)}
+  80%{clip-path:inset(58% 0 22% 0); transform:translateX(16px)}
+  84%{clip-path:inset(4% 0 80% 0); transform:translateX(-9px)}
+  88%{clip-path:inset(0 0 0 0); transform:none}
+}
+#hideoBars{position:absolute; inset:0}
+#hideoBars i{
+  position:absolute; left:-6%; right:-6%; display:block;
+  background:#dfe6df; mix-blend-mode:screen;
+}
+#hideoRoll{
+  position:absolute; left:0; right:0; height:26vh;
+  background:linear-gradient(to bottom, transparent, rgba(255,255,255,.055), transparent);
+  animation:hideoRoll 1.5s linear infinite;
+}
+@keyframes hideoRoll{ from{ top:-30vh } to{ top:110vh } }
+@media (prefers-reduced-motion: reduce){
+  #hideoWord{animation:none}
+  #hideoRoll{display:none}
+}
+
+.decode{color:var(--text)}
+.decode::before{color:#f2f4f2; opacity:.5}
 .gl{position:relative; display:inline-block}
 .gl::before,.gl::after{
   content:attr(data-t); position:absolute; left:0; top:0; width:100%;
@@ -544,6 +600,12 @@ body[data-crt="off"] #vignette{display:none !important}
   <div id="scanlines"></div><div id="grain"></div><div id="vignette"></div><div id="glitchbars"></div>
 </div>
 
+<div id="hideo" hidden aria-hidden="true">
+  <div id="hideoWord"><svg id="hideoSvg" viewBox="0 0 33 7" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges" aria-label="HIDEO"><rect x="0" y="0" width="1" height="1"/><rect x="4" y="0" width="1" height="1"/><rect x="0" y="1" width="1" height="1"/><rect x="4" y="1" width="1" height="1"/><rect x="0" y="2" width="1" height="1"/><rect x="4" y="2" width="1" height="1"/><rect x="0" y="3" width="5" height="1"/><rect x="0" y="4" width="1" height="1"/><rect x="4" y="4" width="1" height="1"/><rect x="0" y="5" width="1" height="1"/><rect x="4" y="5" width="1" height="1"/><rect x="0" y="6" width="1" height="1"/><rect x="4" y="6" width="1" height="1"/><rect x="7" y="0" width="5" height="1"/><rect x="9" y="1" width="1" height="1"/><rect x="9" y="2" width="1" height="1"/><rect x="9" y="3" width="1" height="1"/><rect x="9" y="4" width="1" height="1"/><rect x="9" y="5" width="1" height="1"/><rect x="7" y="6" width="5" height="1"/><rect x="14" y="0" width="4" height="1"/><rect x="14" y="1" width="1" height="1"/><rect x="18" y="1" width="1" height="1"/><rect x="14" y="2" width="1" height="1"/><rect x="18" y="2" width="1" height="1"/><rect x="14" y="3" width="1" height="1"/><rect x="18" y="3" width="1" height="1"/><rect x="14" y="4" width="1" height="1"/><rect x="18" y="4" width="1" height="1"/><rect x="14" y="5" width="1" height="1"/><rect x="18" y="5" width="1" height="1"/><rect x="14" y="6" width="4" height="1"/><rect x="21" y="0" width="5" height="1"/><rect x="21" y="1" width="1" height="1"/><rect x="21" y="2" width="1" height="1"/><rect x="21" y="3" width="4" height="1"/><rect x="21" y="4" width="1" height="1"/><rect x="21" y="5" width="1" height="1"/><rect x="21" y="6" width="5" height="1"/><rect x="29" y="0" width="3" height="1"/><rect x="28" y="1" width="1" height="1"/><rect x="32" y="1" width="1" height="1"/><rect x="28" y="2" width="1" height="1"/><rect x="32" y="2" width="1" height="1"/><rect x="28" y="3" width="1" height="1"/><rect x="32" y="3" width="1" height="1"/><rect x="28" y="4" width="1" height="1"/><rect x="32" y="4" width="1" height="1"/><rect x="28" y="5" width="1" height="1"/><rect x="32" y="5" width="1" height="1"/><rect x="29" y="6" width="3" height="1"/></svg></div>
+  <div id="hideoBars"></div>
+  <div id="hideoRoll"></div>
+</div>
+
 <div id="boot">
   <div id="bootLogo"><img id="bootMark" alt="Making Enemies"><small>Hostile Creative System</small></div>
   <div id="bootLines"></div>
@@ -587,7 +649,7 @@ const CONFIG = {
   systemName: "ME/OS",
   version: "1.0",          // the fictional OS version
   build: "2026.08",
-  release: "beta v3.7",    // real build of this site — bump on every saved version
+  release: "beta v4.0",    // real build of this site — bump on every saved version
   channel: "[UNSTABLE]",
   // Global visit counter. Empty = counts this browser only.
   // Works with any endpoint returning {"count":n} or {"value":n}. Examples:
@@ -878,6 +940,65 @@ const SFX = {
   dead:  () => { beep(200,.14,"sawtooth",.06); setTimeout(()=>beep(90,.22,"sawtooth",.055),120); }
 };
 
+/* A broken television, not a beep: two detuned tones that beat against each
+   other, a low mains hum underneath, and a hiss of static over the top. */
+function tvError(dur = 3.2){
+  if(!state.sound) return;
+  try{
+    if(!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+    if(actx.state === "suspended") actx.resume();
+    const t0 = actx.currentTime, out = actx.createGain();
+    out.gain.setValueAtTime(0, t0);
+    out.gain.linearRampToValueAtTime(.09, t0 + .04);
+    out.gain.setValueAtTime(.09, t0 + dur - .5);
+    out.gain.exponentialRampToValueAtTime(.0001, t0 + dur);
+    out.connect(actx.destination);
+
+    [1000, 1004.5, 250].forEach((f, i) => {
+      const o = actx.createOscillator(), g = actx.createGain();
+      o.type = i === 2 ? "sawtooth" : "square";
+      o.frequency.value = f;
+      g.gain.value = i === 2 ? .25 : .5;
+      o.connect(g); g.connect(out);
+      o.start(t0); o.stop(t0 + dur);
+    });
+
+    // static hiss
+    const len = Math.floor(actx.sampleRate * dur);
+    const buf = actx.createBuffer(1, len, actx.sampleRate);
+    const d = buf.getChannelData(0);
+    for(let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * .35;
+    const noise = actx.createBufferSource(); noise.buffer = buf;
+    const nf = actx.createBiquadFilter(); nf.type = "highpass"; nf.frequency.value = 1800;
+    const ng = actx.createGain(); ng.gain.value = .28;
+    noise.connect(nf); nf.connect(ng); ng.connect(out);
+    noise.start(t0); noise.stop(t0 + dur);
+  }catch(e){}
+}
+
+/* Text that lands scrambled and resolves itself, character by character.
+   Used for the line the system prints once the signal comes back. */
+const NOISE_CHARS = "▚▞▓▒░#%@&$§¤×+=/\\|<>0O1I";
+function decodeText(el, finalText, ms = 900){
+  if(reduced){ el.textContent = finalText; el.setAttribute("data-t", finalText); return; }
+  const chars = finalText.split("");
+  const locked = chars.map(c => c === " " || c === "." ? true : false);
+  const t0 = performance.now();
+  const step = () => {
+    const k = Math.min(1, (performance.now() - t0) / ms);
+    const out = chars.map((c, i) => {
+      if(locked[i]) return c;
+      if(Math.random() < k * k) { locked[i] = true; return c; }
+      return NOISE_CHARS[(Math.random() * NOISE_CHARS.length) | 0];
+    }).join("");
+    el.textContent = out;
+    el.setAttribute("data-t", out);
+    if(k < 1) requestAnimationFrame(step);
+    else { el.textContent = finalText; el.setAttribute("data-t", finalText); }
+  };
+  step();
+}
+
 /* ---------- GLITCH ---------- */
 const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const coarse  = matchMedia("(pointer:coarse)").matches;
@@ -966,6 +1087,7 @@ const I18N = {
     gm_snake:"What the hell?!",
     gm_breakout:"Sector damaged. Recovery pending.",
     gm_abadia:"Now at the end of my life as a sinner.",
+    sec_hideo:"Signal restored. doG is an astr0nauT.",
     sec_whoami:"You are a human being, and therefore a being limited by your own knowledge, your doubts and your fears.",
     h_title:"Available commands", h_foot:"Not everything is on this list.",
 
@@ -1111,6 +1233,7 @@ const I18N = {
     gm_snake:"¡Pero qué coño!",
     gm_breakout:"Sector dañado. Recuperación pendiente.",
     gm_abadia:"Ya al final de mi vida como pecador.",
+    sec_hideo:"Señal recuperada. doG is an astr0nauT.",
     sec_whoami:"Eres un ser humano y, por ende, un ser limitado por tu propio conocimiento, tus dudas y tus miedos.",
     h_title:"Comandos disponibles", h_foot:"No todo está en esta lista.",
 
@@ -1571,6 +1694,53 @@ defc({ name:"sound", aliases:["sonido"], usage:"sound on|off", get desc(){ retur
 }});
 
 /* ---------- SECRET COMMANDS ---------- */
+defc({ name:"hideo", desc:"", visible:false, run(){
+  const el = $("#hideo"), bars = $("#hideoBars");
+  const DUR = 3600;
+
+  el.hidden = false; el.classList.remove("out");
+  glitch(2.4);
+  tvError(DUR / 1000);
+
+  // interference bars, redrawn while the signal is broken
+  const paint = () => {
+    bars.innerHTML = "";
+    if(Math.random() < .45) return;          // most frames stay clean
+    const rows = 2 + Math.floor(Math.random() * 4);
+    for(let i = 0; i < rows; i++){
+      const b = document.createElement("i");
+      b.style.top = (Math.random() * 100) + "%";
+      b.style.height = (1 + Math.random() * 5) + "px";
+      b.style.opacity = (.08 + Math.random() * .26);
+      b.style.transform = "translateX(" + ((Math.random() * 60 - 30) | 0) + "px)";
+      bars.appendChild(b);
+    }
+    setTimeout(() => { if(!el.hidden) bars.innerHTML = ""; }, 90);
+  };
+  paint();
+  const iv = reduced ? null : setInterval(paint, 190);
+
+  const end = () => {
+    if(iv) clearInterval(iv);
+    el.classList.add("out");
+    setTimeout(() => {
+      el.hidden = true; el.classList.remove("out"); bars.innerHTML = "";
+      glitch(1.6);
+      print("");
+      const msg = t("sec_hideo");
+      print(`<span class="gl decode" data-t="${msg}">${msg}</span>`, "dim");
+      setTimeout(() => {
+        const el = out.querySelector(".decode:last-of-type") ||
+                   [...out.querySelectorAll(".decode")].pop();
+        if(el) decodeText(el, msg, 1100);
+      }, 60);
+      input.focus();
+    }, 450);
+  };
+  setTimeout(end, DUR);
+  unlock("hideo");
+}});
+
 defc({ name:"whoami", desc:"", visible:false, run(){
   print("");
   print(t("sec_whoami"), "dim");
