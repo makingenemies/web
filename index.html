@@ -479,7 +479,6 @@ body[data-crt="off"] #vignette{display:none !important}
     </span>
     <span class="meta">
       <span id="buildTag">beta</span>
-      <span id="secretCount">Secrets 0/6</span>
     </span>
     <span class="sep"></span>
     <span id="clock" class="meta"><span>--:--:--</span></span>
@@ -588,7 +587,7 @@ const CONFIG = {
   systemName: "ME/OS",
   version: "1.0",          // the fictional OS version
   build: "2026.08",
-  release: "beta v3.1",    // real build of this site — bump on every saved version
+  release: "beta v3.3",    // real build of this site — bump on every saved version
   channel: "[UNSTABLE]",
   domain: "makingenemies.es",
   contact: {
@@ -751,9 +750,9 @@ const PROJECTS = [
 
 /* ---------- DATA: PROGRAMS ---------- */
 const GAMES = [
-  { id:"pong",     title:"PONG",     status:"locked",    desc:"Disabled for now." },
-  { id:"snake",    title:"SNAKE",    status:"online", desc:"Grid crawler. Do not eat yourself." },
-  { id:"breakout", title:"BREAKOUT", status:"corrupted", desc:"Sector damaged. Recovery pending." }
+  { id:"snake",    title:"SNAKE",    status:"online",    get desc(){ return t("gm_snake"); } },
+  { id:"breakout", title:"BREAKOUT", status:"corrupted", get desc(){ return t("gm_breakout"); } },
+  { id:"abadia",   title:"LA ABADÍA DEL CRIMEN", status:"locked", get desc(){ return t("gm_abadia"); } }
 ];
 
 /* ---------- STATE (swap this adapter for localStorage in the real build) ---------- */
@@ -767,7 +766,7 @@ const state = {
   lang:LANGS[DETECTED].available ? DETECTED : "en",
   pendingAnchor:false, anchorEl:null
 };
-const SECRET_TOTAL = 5; // the 7-0 Pong award is paused along with Pong
+const SECRET_TOTAL = 4; // whoami · silence · ME-02 key · seal   (counter hidden for now)
 function unlock(id, msg){
   if(state.secrets[id]) return false;
   state.secrets[id] = true;
@@ -778,8 +777,9 @@ updateSecretCount();
   return true;
 }
 function updateSecretCount(){
-  const n = Object.keys(state.secrets).length;
-  document.getElementById("secretCount").textContent = "Secrets " + n + "/" + SECRET_TOTAL;
+  // counter hidden for now — unlocks are still tracked in state.secrets
+  const el = document.getElementById("secretCount");
+  if(el) el.textContent = "Secrets " + Object.keys(state.secrets).length + "/" + SECRET_TOTAL;
 }
 
 /* ---------- DOM ---------- */
@@ -949,6 +949,10 @@ const I18N = {
     d_home:"Return to the terminal.", d_sound:"Toggle system sound.",
     d_crt:"Toggle screen texture.", d_lang:"System language.",
     d_restart:"Reboot the system.",
+    gm_snake:"What the hell?!",
+    gm_breakout:"Sector damaged. Recovery pending.",
+    gm_abadia:"Now at the end of my life as a sinner.",
+    sec_whoami:"You are a human being, and therefore a being limited by your own knowledge, your doubts and your fears.",
     h_title:"Available commands", h_foot:"Not everything is on this list.",
 
     /* about */
@@ -986,7 +990,7 @@ const I18N = {
     ps_desktop:"Desktop", ps_consoles:"Consoles", ps_mobile:"Mobile",
 
     /* play */
-    p_title:"Insert coin", p_online:"[ONLINE]", p_corrupt:"[CORRUPTED]", p_locked:"[LOCKED]",
+    p_scan:"&gt; scanning /programs", p_found:"{n} programs found...", p_online:"[ONLINE]", p_corrupt:"[CORRUPTED]", p_locked:"[LOCKED]",
     p_foot:"Use: play [program] — or press a number. Example: {ex}",
     p_unknown:'Unknown program: "{x}"',
     p_damaged:" — sector damaged.", p_damaged2:"Recovery requires a key this system does not have yet.",
@@ -1083,6 +1087,10 @@ const I18N = {
     d_home:"Vuelve a la terminal.", d_sound:"Activa o desactiva el sonido.",
     d_crt:"Activa o desactiva la textura de pantalla.", d_lang:"Idioma del sistema.",
     d_restart:"Reinicia el sistema.",
+    gm_snake:"¡Pero qué coño!",
+    gm_breakout:"Sector dañado. Recuperación pendiente.",
+    gm_abadia:"Ya al final de mi vida como pecador.",
+    sec_whoami:"Eres un ser humano y, por ende, un ser limitado por tu propio conocimiento, tus dudas y tus miedos.",
     h_title:"Comandos disponibles", h_foot:"No todo está en esta lista.",
 
     ab_title:"Making Enemies",
@@ -1116,7 +1124,7 @@ const I18N = {
     ps_clip:"Escribe {cmd} para leer lo que dijo la prensa.",
     ps_desktop:"Escritorio", ps_consoles:"Consolas", ps_mobile:"Móvil",
 
-    p_title:"Inserta moneda", p_online:"[EN LÍNEA]", p_corrupt:"[CORRUPTO]", p_locked:"[BLOQUEADO]",
+    p_scan:"&gt; explorando /programs", p_found:"{n} juegos encontrados...", p_online:"[EN LÍNEA]", p_corrupt:"[CORRUPTO]", p_locked:"[BLOQUEADO]",
     p_foot:"Usa: play [programa] — o pulsa un número. Ejemplo: {ex}",
     p_unknown:'Programa desconocido: "{x}"',
     p_damaged:" — sector dañado.", p_damaged2:"La recuperación necesita una clave que este sistema aún no tiene.",
@@ -1337,7 +1345,8 @@ defc({ name:"open", usage:"open [slug]", get desc(){ return t("d_open"); }, visi
 defc({ name:"play", aliases:["insertcoin","jugar"], usage:"play [program]", get desc(){ return t("d_play"); }, visible:true, run(args){
   const id = (args[0] || "").toLowerCase();
   if(!id){
-    print(t("p_title"), "head");
+    print(t("p_scan"), "faint");
+    print(t("p_found", { n: GAMES.length }), "head");
     GAMES.forEach((g, i) => {
       const locked = g.status !== "online";
       const label = locked ? g.title : cmdLink("play " + g.id, g.title);
@@ -1533,23 +1542,8 @@ defc({ name:"sound", aliases:["sonido"], usage:"sound on|off", get desc(){ retur
 /* ---------- SECRET COMMANDS ---------- */
 defc({ name:"whoami", desc:"", visible:false, run(){
   print("");
-  printLines(["You are not a user.", "You are a visitor."]);
-  print("But why are you here?", "dim");
+  print(t("sec_whoami"), "dim");
   unlock("whoami");
-}});
-
-defc({ name:"enemies", desc:"", visible:false, run(){
-  print("Manifesto", "head");
-  printLines([
-    "We are not trying to be liked by everyone.",
-    "A world that offends no one describes no one.",
-    "",
-    "Make the thing that costs you something.",
-    "Leave the question open.",
-    "Make enemies."
-  ], "dim");
-  glitch(1.2);
-  unlock("enemies");
 }});
 
 defc({ name:"classified", desc:"", visible:false, run(){
@@ -1634,17 +1628,6 @@ defc({ name:"unlock", usage:"unlock [code]", desc:"", visible:false, run(args){
   SFX.err();
 }});
 
-defc({ name:"sudo", desc:"", visible:false, run(){
-  print("Nice try.", "dim");
-  print("");
-  printLines([
-    "There is no root here. There is no admin.",
-    "There is a label with four people and a lot of coffee.",
-    "You already have every permission we have."
-  ], "faint");
-  beep(320,.06); setTimeout(()=>beep(240,.09),80);
-}});
-
 defc({ name:"status", desc:"", visible:false, run(){
   print(t("st_title"), "head");
   const n = Object.keys(state.secrets).length;
@@ -1653,7 +1636,6 @@ defc({ name:"status", desc:"", visible:false, run(){
     [t("st_build"), CONFIG.build],
     [t("st_release"), CONFIG.release],
     [t("st_sound"), state.sound ? t("st_on") : t("st_off")],
-    [t("st_secrets"), n + " / " + SECRET_TOTAL + t("st_found")],
     ["pong", state.scores.pong != null ? t("st_best") + state.scores.pong : t("st_norecord")],
     ["snake", state.scores.snake != null ? t("st_best") + state.scores.snake : t("st_norecord")]
   ]);
@@ -2103,7 +2085,8 @@ function launchGame(id){
   gameEl.hidden = false;
   gameTitle.textContent = id.toUpperCase() + ".EXE";
   dpad.innerHTML = ""; dpad.classList.remove("on");
-  current = id === "pong" ? Pong() : Snake();
+  const PROGRAMS = { snake: Snake, pong: Pong };   // pong kept, shelved
+  current = (PROGRAMS[id] || Snake)();
   fitCanvas();
   current.start();
   last = performance.now();
