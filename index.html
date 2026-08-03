@@ -587,8 +587,13 @@ const CONFIG = {
   systemName: "ME/OS",
   version: "1.0",          // the fictional OS version
   build: "2026.08",
-  release: "beta v3.3",    // real build of this site — bump on every saved version
+  release: "beta v3.7",    // real build of this site — bump on every saved version
   channel: "[UNSTABLE]",
+  // Global visit counter. Empty = counts this browser only.
+  // Works with any endpoint returning {"count":n} or {"value":n}. Examples:
+  //   "https://abacus.jasoncameron.dev/hit/makingenemies.es/meos"   (no server needed)
+  //   "https://www.makingenemies.es/visits.php"                     (your own, see visits.php)
+  visitsUrl: "https://abacus.jasoncameron.dev/hit/makingenemies.es/meos",
   domain: "makingenemies.es",
   contact: {
     email: "makingenemiesgames@gmail.com",
@@ -635,6 +640,7 @@ const PROJECTS = [
     tagline: "An abbey. A vow of silence. A young writer looking for inspiration.",
     status: "released",
     year: 2025,
+    publisher: { name:"DevilishGames", url:"https://www.devilishgames.com/" },
     summary: "Our first game, released in 2025. A point-and-click adventure where William, a young writer in search of inspiration, enters an abbey shrouded in silence. What he finds there is not inspiration. Ported to consoles in 2026.",
     platformGroups: [
       { label:"Desktop",  items:[
@@ -761,6 +767,7 @@ const state = {
   history:[], hi:-1,
   secrets:{}, scores:{}, view:null, hovered:null, crt:false,
   media:null, mediaIndex:0, mediaList:[], lastSection:null,
+  visits:0, visitsSource:"local",
   viewStack:[],      // restore callbacks: closing pops back one level
   clippings:CLIPPINGS, clipSource:"embedded", lastProject:null,
   lang:LANGS[DETECTED].available ? DETECTED : "en",
@@ -948,7 +955,14 @@ const I18N = {
     d_history:"Show commands used this session.", d_back:"Close the current view.",
     d_home:"Return to the terminal.", d_sound:"Toggle system sound.",
     d_crt:"Toggle screen texture.", d_lang:"System language.",
-    d_restart:"Reboot the system.",
+    d_restart:"Reboot the system.", d_visits:"Visit counter.",
+    boot_visits:"VISITS", boot_syncing:"SYNCING...",
+    visits_label:"Visits", vi_title:"Visit counter",
+    vi_count:"count", vi_source:"source",
+    vi_global:"global · shared by every visitor",
+    vi_local:"this browser · boots recorded here",
+    vi_session:"this session · storage unavailable",
+    vi_foot:"Every boot is one more. Yours included.",
     gm_snake:"What the hell?!",
     gm_breakout:"Sector damaged. Recovery pending.",
     gm_abadia:"Now at the end of my life as a sinner.",
@@ -981,7 +995,7 @@ const I18N = {
     g_play:"play ↗",
 
     /* project sheet */
-    ps_status:"Status", ps_platforms:"Platforms", ps_tags:"Tags",
+    ps_status:"Status", ps_publisher:"Publisher", ps_platforms:"Platforms", ps_tags:"Tags",
     ps_nomedia:"NO MEDIA IN PUBLIC INDEX",
     ps_sealed:"This entry is not cleared for release. Everything above is redacted at render time.",
     ps_nolinks:"No links configured yet for this entry.",
@@ -1086,7 +1100,14 @@ const I18N = {
     d_history:"Comandos usados en esta sesión.", d_back:"Cierra la vista actual.",
     d_home:"Vuelve a la terminal.", d_sound:"Activa o desactiva el sonido.",
     d_crt:"Activa o desactiva la textura de pantalla.", d_lang:"Idioma del sistema.",
-    d_restart:"Reinicia el sistema.",
+    d_restart:"Reinicia el sistema.", d_visits:"Contador de visitas.",
+    boot_visits:"VISITAS", boot_syncing:"SINCRONIZANDO...",
+    visits_label:"Visitas", vi_title:"Contador de visitas",
+    vi_count:"cuenta", vi_source:"origen",
+    vi_global:"global · compartido por todos los visitantes",
+    vi_local:"este navegador · arranques registrados aquí",
+    vi_session:"esta sesión · almacenamiento no disponible",
+    vi_foot:"Cada arranque suma uno. El tuyo incluido.",
     gm_snake:"¡Pero qué coño!",
     gm_breakout:"Sector dañado. Recuperación pendiente.",
     gm_abadia:"Ya al final de mi vida como pecador.",
@@ -1116,7 +1137,7 @@ const I18N = {
     g_foot:"Usa: open [slug] para ver una ficha · {more} para el archivo completo de jams.",
     g_play:"jugar ↗",
 
-    ps_status:"Estado", ps_platforms:"Plataformas", ps_tags:"Etiquetas",
+    ps_status:"Estado", ps_publisher:"Editor", ps_platforms:"Plataformas", ps_tags:"Etiquetas",
     ps_nomedia:"SIN MEDIA EN EL ÍNDICE PÚBLICO",
     ps_sealed:"Esta entrada no está autorizada para su publicación. Todo lo anterior se censura al renderizar.",
     ps_nolinks:"Todavía no hay enlaces configurados para esta entrada.",
@@ -1524,6 +1545,16 @@ defc({ name:"lang", aliases:["locale","language","idioma"], usage:"lang es|en", 
   if(setLang(v)) print(t("sy_lang_set") + LANGS[v].tag + ".", "dim");
 }});
 
+defc({ name:"visits", aliases:["visitas","counter"], desc:"", visible:false, run(){
+  print(t("vi_title"), "head");
+  table([
+    [t("vi_count"), formatVisits(state.visits)],
+    [t("vi_source"), t("vi_" + state.visitsSource)]
+  ]);
+  print("");
+  print(t("vi_foot"), "faint");
+}});
+
 defc({ name:"crt", usage:"crt on|off", get desc(){ return t("d_crt"); }, visible:true, run(args){
   const v = (args[0] || "").toLowerCase();
   state.crt = (v === "on" || v === "off") ? (v === "on") : !state.crt;
@@ -1662,6 +1693,43 @@ defc({ name:"skip", desc:"", visible:false, run(){ print("Boot already completed
 
 /* sections that get the glitch cut when you land on them */
 const SECTIONS = new Set(["help","about","games","presskit","contact","play","archive","clippings","friends","more"]);
+
+/* ---------- VISIT COUNTER ----------
+   Two modes. With `visitsUrl` configured it shows the real global number.
+   Without it, it counts this browser's own boots — which is honest and still
+   in character: an OS knows how many times it has been switched on. */
+function formatVisits(nb){ return String(nb).padStart(6, "0"); }
+
+function paintVisits(){
+  const el = document.getElementById("visitsTag");
+  if(el) el.textContent = t("visits_label") + " " + formatVisits(state.visits);
+  // if the number arrived late, patch the line already printed on the boot log
+  const bl = document.getElementById("bootLines");
+  if(bl && state.visits && bl.textContent.includes(t("boot_syncing"))){
+    bl.textContent = bl.textContent.replace(t("boot_syncing"), formatVisits(state.visits));
+  }
+}
+
+async function loadVisits(){
+  if(CONFIG.visitsUrl){
+    try{
+      const res = await fetch(CONFIG.visitsUrl, { cache:"no-store" });
+      const data = await res.json();
+      const nb = parseInt(data.count ?? data.value ?? data.visits, 10);
+      if(!isNaN(nb)){ state.visits = nb; state.visitsSource = "global"; paintVisits(); return; }
+    }catch(e){ /* falls through to the local count */ }
+  }
+  // local mode: bump this browser's own boot count
+  try{
+    const k = "meos.visits";
+    const nb = parseInt(localStorage.getItem(k) || "0", 10) + 1;
+    localStorage.setItem(k, nb);
+    state.visits = nb; state.visitsSource = "local";
+  }catch(e){
+    state.visits = 1; state.visitsSource = "session";   // storage blocked
+  }
+  paintVisits();
+}
 
 /* ---------- CLIPPINGS LOADER ----------
    Runs once at start, in the background. If it succeeds the external list
@@ -1962,6 +2030,7 @@ function openProject(p, keepStack){
       ? `<p class="note">${t("ps_sealed")}</p>` : ""}
 
     <div class="row"><span>${t("ps_status")}</span><span>${statusLabel(p)}${p.year ? " · " + p.year : ""}</span></div>
+    ${p.publisher ? `<div class="row"><span>${t("ps_publisher")}</span><span><a class="cmd ext" href="${p.publisher.url}" target="_blank" rel="noopener">${p.publisher.name}</a></span></div>` : ""}
     ${p.platformGroups
       ? p.platformGroups.map(g =>
           `<div class="row"><span>${t("ps_" + g.label.toLowerCase())}</span><span>${g.items.map(i => i.name).join(" \u00b7 ")}</span></div>`).join("")
@@ -2518,6 +2587,7 @@ function setLang(code){
   document.documentElement.lang = code;
   $("#langBtn").textContent = "Lang " + code.toUpperCase();
   paintChrome();
+  paintVisits();
   // redraw whatever is on screen in the new language
   if(state.view === "window" && state.currentProject){
     const p = state.currentProject; openProject(p, true);
@@ -2562,6 +2632,7 @@ document.getElementById("buildTag").textContent = CONFIG.release;
 paintChrome();
 document.getElementById("langBtn").textContent = "Lang " + state.lang.toUpperCase();
 document.documentElement.lang = state.lang;
+loadVisits();
 loadClippings();
 updateSecretCount();
 syncEcho();
