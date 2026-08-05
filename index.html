@@ -4,6 +4,18 @@
 <meta charset="utf-8">
 <meta name="color-scheme" content="dark">
 <meta name="theme-color" content="#000000">
+
+<!-- Web app. Icon files live in ./icons/ — see manifest.webmanifest -->
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="96x96" href="icons/favicon-96.png">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ME/OS">
+<meta name="application-name" content="ME/OS">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
 <title>MAKING ENEMIES OS</title>
 <style>
@@ -650,7 +662,7 @@ const CONFIG = {
   systemName: "ME/OS",
   version: "1.0",          // the fictional OS version
   build: "2026.08",
-  release: "beta v4.2",    // real build of this site — bump on every saved version
+  release: "beta v4.4",    // real build of this site — bump on every saved version
   channel: "[UNSTABLE]",
   // Global visit counter. Empty = counts this browser only.
   // Works with any endpoint returning {"count":n} or {"value":n}. Examples:
@@ -2809,9 +2821,12 @@ document.getElementById("markImg").src = ASSETS.flag;
 const bm = document.getElementById("bootMark");
 bm.src = ASSETS.wordmark;
 if(!reduced) bm.classList.add("on");
-const fav = document.createElement("link");
-fav.rel = "icon"; fav.href = ASSETS.flag;
-document.head.appendChild(fav);
+// fallback favicon, only if the icon files are not there yet
+if(!document.querySelector('link[rel="icon"][href*="icons/"]')){
+  const fav = document.createElement("link");
+  fav.rel = "icon"; fav.href = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAIAAABt+uBvAAABaklEQVR42u2cSxaDIAwACa/3vzJddGO1FYFAYpzZtloYQz4umhIAALhFWi8opXxdL6J17e7Tyrr//27Tfap3zssexfm6W3c1aOE62eeyRiLIUlC3Mj9mVwuKbSel9PJbPlYdoukR1Jd9t/s/fqfbjnq05gSGgm6dfTQFBRChkKTd9nJTUzs5aFWZL6WcFyat6Ftc/okgC0HViV8x1vwKOm77s9VgFW0oB4lIVUdfynAyZ+gfsZ++WmPKj50GQX0Hx9VWo03zVg298ivXkxgJED4e+yBvWvOkbVyMLMWeYFJ7keM9c49JetsQDfqa1FjZV7F/6757Y50NjzdV7DGCdsdnJAsMZpDYBQEAAAAAbkS9MX3aINb2yvXJYyrDKoIQhCAEISiyIGo8EQQAAAAA0IkwauyNXHzlyiDGLIYgBCHIqyAyNBGEIAQBAAAAABgiTKp7I1b/5coshiAEkYCIIAQhCEEIAgAA0OEN/dqHbJId1hMAAAAASUVORK5CYII=";
+  document.head.appendChild(fav);
+}
 
 document.body.dataset.crt = state.crt ? "on" : "off";
 document.getElementById("buildTag").textContent = CONFIG.release;
