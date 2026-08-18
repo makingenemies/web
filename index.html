@@ -723,7 +723,7 @@ const CONFIG = {
   systemName: "ME/OS",
   version: "1.0",          // the fictional OS version
   build: "2026.08",
-  release: "beta v4.8",    // real build of this site — bump on every saved version
+  release: "beta v4.9",    // real build of this site — bump on every saved version
   channel: "[UNSTABLE]",
   // Global visit counter. Empty = counts this browser only.
   // Works with any endpoint returning {"count":n} or {"value":n}. Examples:
@@ -1819,7 +1819,7 @@ defc({ name:"sound", aliases:["sonido"], usage:"sound on|off", get desc(){ retur
 }});
 
 /* ---------- SECRET COMMANDS ---------- */
-defc({ name:"eclipse", aliases:["eclipsis"], desc:"", visible:false, run(){
+defc({ name:"eclipse", aliases:["eclipsis","scholar2","scholarii","scholar-2","teaser","sa2"], desc:"", visible:false, run(){
   const el = $("#eclipse"), img = $("#ecImg"), frame = $("#ecFrame"),
         line = $("#ecLine"), border = $("#ecBorder"), msg = $("#ecMsg");
   const LOAD = 6000, BLOCKS = 34;
